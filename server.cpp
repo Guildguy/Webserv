@@ -1,5 +1,15 @@
 #include "server.hpp"
 
+Server::Server() : fd(-1) {}
+
+Server::~Server()
+{
+  if (this->fd != -1)
+    close(this->fd);
+}
+
+
+
 bool  Server::createAndConfigServersocket()
 {
   this->fd = socket(AF_INET, SOCK_STREAM, 0);

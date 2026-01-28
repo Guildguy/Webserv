@@ -16,12 +16,16 @@ class  Server
     int          fd;
     sockaddr_in  saddr;
 
+    bool  handleError(const std::string& msg);
     bool configServerNonBlocking();
     bool configServerReuseAddress();
     bool validateServerSocketCreation();
 
 
   public:
+    Server();
+    ~Server();
+
     bool createAndConfigServersocket();
   
 };
