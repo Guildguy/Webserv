@@ -20,6 +20,7 @@ class  Server
     bool configServerNonBlocking();
     bool configServerReuseAddress();
     bool validateServerSocketCreation();
+    void closeServerFD();
 
 
   public:

@@ -8,8 +8,6 @@ Server::~Server()
     close(this->fd);
 }
 
-
-
 bool  Server::createAndConfigServersocket()
 {
   this->fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -17,20 +15,28 @@ bool  Server::createAndConfigServersocket()
     return (false);
 
   if (!this->configServerNonBlocking())
+  {
+    closeServerFD();
     return (false);
+  }
   if (!this->configServerReuseAddress())
+  {
+    closeServerFD();
     return (false);
+  }
   return (true);
+}
+
+bool  Server::handleError(const std::string& msg)
+{
+  perror(msg.c_str());
+  return (false);
 }
 
 bool Server::validateServerSocketCreation()
 {
   if (this->fd < 0)
-  {
-    perror("failed to create a server socket!");
-    return (false);
-  }
-  std::cout << "server socket created!" << std::endl;
+    return (handleError("error: socket creation failed"));
   return (true);
 }
 
@@ -39,30 +45,26 @@ bool Server::configServerNonBlocking()
   int flag = fcntl(this->fd, F_GETFL, 0);
 
   if (flag == -1)
-  {
-    perror("error: fcntl(F_GETFL)");
-    close(this->fd);
-    return (false);
-  }
-
+    return (handleError("error: fcntl(F_GETFL) failed"));
   if (fcntl(this->fd, F_SETFL, flag | O_NONBLOCK) == -1)
-  {
-    perror("error: fcntl(F_SETFL)");
-    close(this->fd);
-    return (false);
-  }
+    return (handleError("error: fcntl(F_SETFL) failed"));
   return (true);
 }
 
 bool Server::configServerReuseAddress()
 {
-  int opt = 0;
+  int opt = 1;
 
   if (setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0)
-  {
-    std::cerr << "setsockopt err\n" << std::endl;
-    close(this->fd);
-    return (false);
-  }
+    return (handleError("error: setsockopt(SO_REUSEADDR) failed"));
   return (true);
+}
+
+void Server::closeServerFD()
+{
+  if (this->fd != -1)
+  {
+    close(this->fd);
+    this->fd = -1;
+  }
 }
