@@ -2,8 +2,10 @@
 #define  SERVER_HPP
 
 #include <iostream>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 
 class  Server
 {
