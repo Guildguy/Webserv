@@ -16,13 +16,13 @@ class  Server
     int          fd;
     sockaddr_in  saddr;
 
-    void configServerNonBlocking();
-    void configServerReuseAddress();
-    void validateServerSocketCreation();
+    bool configServerNonBlocking();
+    bool configServerReuseAddress();
+    bool validateServerSocketCreation();
 
 
   public:
-    void createAndConfigServersocket();
+    bool createAndConfigServersocket();
   
 };
 

@@ -1,25 +1,30 @@
 #include "server.hpp"
 
-void  Server::createAndConfigServersocket()
+bool  Server::createAndConfigServersocket()
 {
   this->fd = socket(AF_INET, SOCK_STREAM, 0);
-  validateServerSocketCreation();
+  if (!this->validateServerSocketCreation())
+    return (false);
 
-  configServerNonBlocking();
-  configServerReuseAddress();
+  if (!this->configServerNonBlocking())
+    return (false);
+  if (!this->configServerReuseAddress())
+    return (false);
+  return (true);
 }
 
-void Server::validateServerSocketCreation()
+bool Server::validateServerSocketCreation()
 {
   if (this->fd < 0)
   {
     perror("failed to create a server socket!");
-    exit(1);
+    return (false);
   }
   std::cout << "server socket created!" << std::endl;
+  return (true);
 }
 
-void Server::configServerNonBlocking()
+bool Server::configServerNonBlocking()
 {
   int flag = fcntl(this->fd, F_GETFL, 0);
 
@@ -27,18 +32,19 @@ void Server::configServerNonBlocking()
   {
     perror("error: fcntl(F_GETFL)");
     close(this->fd);
-    exit(1);
+    return (false);
   }
 
   if (fcntl(this->fd, F_SETFL, flag | O_NONBLOCK) == -1)
   {
     perror("error: fcntl(F_SETFL)");
     close(this->fd);
-    exit(1);
+    return (false);
   }
+  return (true);
 }
 
-void Server::configServerReuseAddress()
+bool Server::configServerReuseAddress()
 {
   int opt = 0;
 
@@ -46,6 +52,7 @@ void Server::configServerReuseAddress()
   {
     std::cerr << "setsockopt err\n" << std::endl;
     close(this->fd);
-    exit(1);
+    return (false);
   }
+  return (true);
 }
