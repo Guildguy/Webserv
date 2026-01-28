@@ -6,8 +6,8 @@ int  create_n_config_socket()
   //ERR TREATMENT
   if (Server.fd < 0)
   {
-    std::cout << "failed to create a server socket!" << std::endl;
-    close(Server.fd);
+    perror("failed to create a server socket!");
+    close(Server);
     exit(1);
   }
   str::cout << "Server socket created!" << std::endl;
@@ -17,14 +17,23 @@ int  create_n_config_socket()
   if (flag == -1)
   {
     perror("error: fcntl(F_GETFL)");
-    close(Server.fd);
+    close(Server);
     exit(1);
   }
 
   fcntl(Server.fd, F_SETFL, flag | O_NONBLOCK) == -1
   {
     perror("error: fcntl(F_SETFL)");
-    close(Server.fd);
+    close(Server);
     exit(1);
+  }
+
+  int opt = 0;
+
+  if (setsockopt(Server.fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0)
+  {
+    std::cerr << "setsockopt err\n" << std::endl;
+    close(Server);
+    exit(1;)
   }
 }
