@@ -11,7 +11,6 @@ Server::~Server()
 bool  Server::createAndConfigServersocket()
 {
   this->fd = socket(AF_INET, SOCK_STREAM, 0);
-
   if (!this->validateServerSocketCreation())
     return (false);
 
@@ -68,4 +67,15 @@ void Server::closeServerFD()
     close(this->fd);
     this->fd = -1;
   }
+}
+
+bool  Server::bindServerSocket()
+{
+  saddr.sin_family = AF_INET;
+  saddr.sin_port = htons(8080);
+  saddr.sin_addr.s_addr = INADDR_ANY;
+
+  if (bind(this->fd, (struct sockaddr*)&this->saddr, sizeof(this->saddr)) < 0)
+    return (handleError("error: bind failed"));
+  return (true);
 }
