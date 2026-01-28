@@ -2,6 +2,8 @@
 #define  SERVER_HPP
 
 #include <iostream>
+#include <unistd.h>
+#include <cstdlib>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
