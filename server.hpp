@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <cstdlib>
+#include <cerrno>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -12,10 +13,16 @@
 class  Server
 {
   private:
+    int          fd;
+    sockaddr_in  saddr;
+
+    void configServerNonBlocking();
+    void configServerReuseAddress();
+    void validateServerSocketCreation();
+
 
   public:
-    sockaddr_in  saddr;
-    int          fd;
+    void createAndConfigServersocket();
   
 };
 
