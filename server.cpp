@@ -30,10 +30,7 @@ bool  Server::createAndPreConfigServerSocket()
 bool  Server::initializeServer(int Port, const std::string &IP)
 {
   if (!this->createAndPreConfigServerSocket())
-  {
-    closeServerFD();
     return (false);
-  }
   if (!this->ConfigServerAddress(Port, IP))
   {
     closeServerFD();
