@@ -13,8 +13,8 @@
 class  Server
 {
   private:
-    int          fd;
-    sockaddr_in  saddr;
+    int                 fd;
+    struct sockaddr_in  saddr;
 
     bool  configServerNonBlocking();
     bool  configServerReuseAddress();

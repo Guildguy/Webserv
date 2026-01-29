@@ -69,6 +69,8 @@ void Server::closeServerFD()
   }
 }
 
+bool Server::ConfigServerAddress(int Port, const std::string& IP)
+
 bool  Server::bindServerSocket()
 {
   saddr.sin_family = AF_INET;
