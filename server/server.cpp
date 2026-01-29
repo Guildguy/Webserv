@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "../includes/server.hpp"
 
 Server::Server() : fd(-1) {}
 
@@ -6,6 +6,23 @@ Server::~Server()
 {
   if (this->fd != -1)
     closeServerFD();
+}
+
+bool  Server::initializeServer(int Port, const std::string &IP)
+{
+  if (!this->createAndPreConfigServerSocket())
+    return (false);
+  if (!this->ConfigServerAddress(Port, IP))
+  {
+    closeServerFD();
+    return (false);
+  }
+  if (!this->bindServerSocket())
+  {
+    closeServerFD();
+    return (false);
+  }
+  return (true);
 }
 
 bool  Server::createAndPreConfigServerSocket()
@@ -27,36 +44,6 @@ bool  Server::createAndPreConfigServerSocket()
   return (true);
 }
 
-bool  Server::initializeServer(int Port, const std::string &IP)
-{
-  if (!this->createAndPreConfigServerSocket())
-    return (false);
-  if (!this->ConfigServerAddress(Port, IP))
-  {
-    closeServerFD();
-    return (false);
-  }
-  if (!this->bindServerSocket())
-  {
-    closeServerFD();
-    return (false);
-  }
-  return (true);
-}
-
-bool  Server::handleError(const std::string& msg)
-{
-  perror(msg.c_str());
-  return (false);
-}
-
-bool Server::validateServerSocketCreation()
-{
-  if (this->fd < 0)
-    return (handleError("error: socket creation failed"));
-  return (true);
-}
-
 bool Server::configServerNonBlocking()
 {
   int flag = fcntl(this->fd, F_GETFL, 0);
@@ -75,15 +62,6 @@ bool Server::configServerReuseAddress()
   if (setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0)
     return (handleError("error: setsockopt(SO_REUSEADDR) failed"));
   return (true);
-}
-
-void Server::closeServerFD()
-{
-  if (this->fd != -1)
-  {
-    close(this->fd);
-    this->fd = -1;
-  }
 }
 
 bool Server::ConfigServerAddress(int Port, const std::string& IP)
