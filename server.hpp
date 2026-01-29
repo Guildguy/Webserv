@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <fcntl.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -18,7 +19,7 @@ class  Server
 
     bool  configServerNonBlocking();
     bool  configServerReuseAddress();
-    bool  ConfigServerAddress(int Port, const std::string& IP)
+    bool  ConfigServerAddress(int Port, const std::string& IP);
     bool  bindServerSocket();
     
     bool  handleError(const std::string& msg);
@@ -29,7 +30,8 @@ class  Server
     Server();
     ~Server();
 
-    bool  createAndConfigServersocket();
+    bool  createAndPreConfigServerSocket();
+    bool  initializeServer(int Port, const std::string &IP);
   
 };
 
