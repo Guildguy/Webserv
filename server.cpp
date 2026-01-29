@@ -24,6 +24,7 @@ bool  Server::createAndConfigServersocket()
     closeServerFD();
     return (false);
   }
+  if ()
   return (true);
 }
 
@@ -70,13 +71,21 @@ void Server::closeServerFD()
 }
 
 bool Server::ConfigServerAddress(int Port, const std::string& IP)
+{
+  saddr.sin_family = AF_INET;
+  saddr.sin_port = htons(Port);
+  
+  if (IP == "0.0.0.0" || IP.empty())
+  {
+    saddr.sin_addr.s_addr = INADDR_ANY;
+    return (true);
+  }
+  saddr.sin_addr.s_addr = inet_addr(IP.c_str());
+  return (true);
+}
 
 bool  Server::bindServerSocket()
 {
-  saddr.sin_family = AF_INET;
-  saddr.sin_port = htons(8080);
-  saddr.sin_addr.s_addr = INADDR_ANY;
-
   if (bind(this->fd, (struct sockaddr*)&this->saddr, sizeof(this->saddr)) < 0)
     return (handleError("error: bind failed"));
   return (true);

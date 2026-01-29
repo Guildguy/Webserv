@@ -18,6 +18,7 @@ class  Server
 
     bool  configServerNonBlocking();
     bool  configServerReuseAddress();
+    bool  ConfigServerAddress(int Port, const std::string& IP)
     bool  bindServerSocket();
     
     bool  handleError(const std::string& msg);
