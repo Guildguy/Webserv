@@ -2,7 +2,9 @@
 #define  SERVER_HPP
 
 #include <iostream>
+#include <signal.h>
 #include <unistd.h>
+#include <poll.h>
 #include <cstdlib>
 #include <cerrno>
 #include <fcntl.h>
@@ -14,8 +16,9 @@
 class  Server
 {
     private:
-        int                 fd;
-        struct sockaddr_in  saddr;
+        int					fd;
+        struct  sockaddr_in	saddr;
+        struct  poll_fd		pollfd_server;
 
         bool  configServerNonBlocking();
         bool  configServerReuseAddress();

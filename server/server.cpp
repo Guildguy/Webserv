@@ -101,3 +101,11 @@ bool  Server::socketListener()
         return (handleError("Error: Socket cannot listen!"));
     return (true);
 }
+
+bool	Server::configPoll()
+{
+	this->pollfd_server.fd = this->fd;
+	this->pollfd_server.events = POLLIN;
+	this->pollfd_server.revents = 0;
+	return (true);
+}
