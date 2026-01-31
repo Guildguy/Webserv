@@ -22,6 +22,11 @@ bool  Server::initializeServer(int Port, const std::string &IP)
     closeServerFD();
     return (false);
   }
+  if (!this->socketListener())
+  {
+    closeServerFD();
+    return (false);
+  }
   return (true);
 }
 
@@ -87,5 +92,12 @@ bool  Server::bindServerSocket()
 {
   if (bind(this->fd, (struct sockaddr*)&this->saddr, sizeof(this->saddr)) < 0)
     return (handleError("error: bind failed"));
+  return (true);
+}
+
+bool  Server::socketListener()
+{
+  if (listen(this->fd, SOMAXCONN) < 0)
+    return (handleError("Error: Socket cannot listen!"));
   return (true);
 }

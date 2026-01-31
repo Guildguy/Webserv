@@ -21,6 +21,7 @@ class  Server
     bool  configServerReuseAddress();
     bool  ConfigServerAddress(int Port, const std::string& IP);
     bool  bindServerSocket();
+    bool  socketListener();
     
     bool  handleError(const std::string& msg);
     bool  validateServerSocketCreation();
