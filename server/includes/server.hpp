@@ -13,27 +13,29 @@
 
 class  Server
 {
-  private:
-    int                 fd;
-    struct sockaddr_in  saddr;
+    private:
+        int                 fd;
+        struct sockaddr_in  saddr;
 
-    bool  configServerNonBlocking();
-    bool  configServerReuseAddress();
-    bool  ConfigServerAddress(int Port, const std::string& IP);
-    bool  bindServerSocket();
-    bool  socketListener();
+        bool  configServerNonBlocking();
+        bool  configServerReuseAddress();
+        bool  ConfigServerAddress(int Port, const std::string& IP);
+        bool  bindServerSocket();
+        bool  socketListener();
+        
+        bool  handleError(const std::string& msg);
+        bool  validateServerSocketCreation();
+        void  closeServerFD();
+
+    public:
+        Server();
+        ~Server();
+
+        bool  createAndPreConfigServerSocket();
+        bool  initializeServer(int Port, const std::string &IP);
     
-    bool  handleError(const std::string& msg);
-    bool  validateServerSocketCreation();
-    void  closeServerFD();
-
-  public:
-    Server();
-    ~Server();
-
-    bool  createAndPreConfigServerSocket();
-    bool  initializeServer(int Port, const std::string &IP);
-  
 };
 
 #endif
+
+//ncdu
