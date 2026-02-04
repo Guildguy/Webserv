@@ -31,6 +31,8 @@ class  Server
         bool	validateServerSocketCreation();
         bool	closeServerFD();
 
+		int		acceptNewClient(std::vector<pollfd>& fds);
+
     public:
         Server();
         ~Server();
