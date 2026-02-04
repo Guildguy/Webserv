@@ -18,8 +18,12 @@ bool  Server::initializeServer(int Port, const std::string &IP)
         return (closeServerFD());
     if (!this->socketListener())
         return (closeServerFD());
+    if (!this->configPoll());
+        return (closeServerFD());
     return (true);
 }
+
+
 
 bool  Server::setupSocket()
 {
