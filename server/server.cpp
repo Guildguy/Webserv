@@ -38,6 +38,16 @@ void    Server::run()
             return (handleError("poll failed"));
             break;
         }
+        for (size_t i = 0; i < fd.size(); i++)
+        {
+            if (fds[i].revents & POLLIN)
+            {
+                //se o valor for o ssocket
+                    //aceita novos clientes (accept)
+                //caso contrario
+                    //trata os dados do cliente (recv)?
+            }
+        }
     }
 }
 
