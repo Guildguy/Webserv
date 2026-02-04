@@ -13,20 +13,11 @@ bool  Server::initializeServer(int Port, const std::string &IP)
     if (!this->createAndPreConfigServerSocket())
         return (false);
     if (!this->ConfigServerAddress(Port, IP))
-    {
-        closeServerFD();
-        return (false);
-    }
+        return (closeServerFD());
     if (!this->bindServerSocket())
-    {
-        closeServerFD();
-        return (false);
-    }
+        return (closeServerFD());
     if (!this->socketListener())
-    {
-        closeServerFD();
-        return (false);
-    }
+        return (closeServerFD());
     return (true);
 }
 
@@ -37,15 +28,9 @@ bool  Server::createAndPreConfigServerSocket()
         return (false);
 
     if (!this->configServerNonBlocking())
-    {
-        closeServerFD();
-        return (false);
-    }
+        return (closeServerFD());
     if (!this->configServerReuseAddress())
-    {
-        closeServerFD();
-        return (false);
-    }
+        return (closeServerFD());
     return (true);
 }
 
