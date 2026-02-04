@@ -20,15 +20,15 @@ class  Server
         struct  sockaddr_in	saddr;
         struct  pollfd		pollfd_server;
 
-        bool  configServerNonBlocking();
-        bool  configServerReuseAddress();
-        bool  ConfigServerAddress(int Port, const std::string& IP);
-        bool  bindServerSocket();
-        bool  socketListener();
+        bool	configServerNonBlocking();
+        bool	configServerReuseAddress();
+        bool	ConfigServerAddress(int Port, const std::string& IP);
+        bool	bindServerSocket();
+        bool	socketListener();
         
-        bool  handleError(const std::string& msg);
-        bool  validateServerSocketCreation();
-        void  closeServerFD();
+        bool	handleError(const std::string& msg);
+        bool	validateServerSocketCreation();
+        bool	closeServerFD();
 
     public:
         Server();
