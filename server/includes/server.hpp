@@ -18,7 +18,7 @@ class  Server
     private:
         int					fd;
         struct  sockaddr_in	saddr;
-        struct  poll_fd		pollfd_server;
+        struct  pollfd		pollfd_server;
 
         bool  configServerNonBlocking();
         bool  configServerReuseAddress();
