@@ -23,7 +23,23 @@ bool  Server::initializeServer(int Port, const std::string &IP)
     return (true);
 }
 
+void    Server::run()
+{
+    std::vector<pollfd> fds;
 
+    fds.push_back(pollfd_server);
+
+    while (true)
+    {
+        int ret = poll(fds.data(), fds.size(), -1);
+
+        if (ret < 0)
+        {
+            return (handleError("poll failed"));
+            break;
+        }
+    }
+}
 
 bool  Server::setupSocket()
 {
