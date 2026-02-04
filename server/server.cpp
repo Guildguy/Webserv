@@ -10,7 +10,7 @@ Server::~Server()
 
 bool  Server::initializeServer(int Port, const std::string &IP)
 {
-    if (!this->createAndPreConfigServerSocket())
+    if (!this->setupSocket())
         return (false);
     if (!this->ConfigServerAddress(Port, IP))
         return (closeServerFD());
@@ -21,7 +21,7 @@ bool  Server::initializeServer(int Port, const std::string &IP)
     return (true);
 }
 
-bool  Server::createAndPreConfigServerSocket()
+bool  Server::setupSocket()
 {
     this->fd = socket(AF_INET, SOCK_STREAM, 0);
     if (!this->validateServerSocketCreation())
