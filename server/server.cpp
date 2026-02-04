@@ -35,20 +35,36 @@ void    Server::run()
 
         if (ret < 0)
         {
-            return (handleError("poll failed"));
+            handleError("poll failed");
             break;
         }
-        for (size_t i = 0; i < fd.size(); i++)
+        for (size_t i = 0; i < fds.size(); i++)
         {
             if (fds[i].revents & POLLIN)
             {
-                //se o valor for o ssocket
-                    //aceita novos clientes (accept)
+                if (i == 0)
+                    acceptNewClient(fds);
                 //caso contrario
                     //trata os dados do cliente (recv)?
             }
         }
     }
+}
+
+int    Server::acceptNewClient(std::vector<pollfd>& fds)
+{
+    int newClient = accept(this->fd, nullptr, nullptr);
+    
+
+    if (newClient == -1)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return (-1);
+        handleError("accept failed");
+        return (-1);
+    }
+    //config client non blocking
+    return (newClient);
 }
 
 bool  Server::setupSocket()
