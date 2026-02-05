@@ -40,15 +40,43 @@ void    Server::run()
         }
         for (size_t i = 0; i < fds.size(); i++)
         {
-            if (fds[i].revents & POLLIN)
+            if (!(fds[i].revents & POLLIN))
+                continue;
+            if (i == 0)
             {
-                if (i == 0)
-                    acceptNewClient(fds);
-                //caso contrario
-                    //trata os dados do cliente (recv)?
+                acceptNewClient(fds);
+                continue;
             }
+            handleClientData(fds, i);
         }
     }
+}
+
+int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
+{
+    char    buffer[1024];
+    int     clientFd = fds[index].fd;
+
+    ssize_t  bRead = recv(clientFd, buffer, sizeof(buffer), 0);
+    if (bRead == 0)
+    {
+        close(clientFd);
+        fds.erase(fds.begin() + index);
+        return (0);
+    }
+    if (bRead < 0)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+                return (-1);
+        close(clientFd);
+        fds.erase(fds.begin() + index);
+        return (-1);
+    }
+
+    std::cout << "Received " << bRead << " bytes: " 
+    << std::string(buffer, bRead) << std::endl;
+    fds[index].events = POLLOUT;
+    return (bRead);
 }
 
 int    Server::acceptNewClient(std::vector<pollfd>& fds)
