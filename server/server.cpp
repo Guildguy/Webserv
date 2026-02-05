@@ -18,7 +18,7 @@ bool  Server::initializeServer(int Port, const std::string &IP)
         return (closeServerFD());
     if (!this->socketListener())
         return (closeServerFD());
-    if (!this->configPoll());
+    if (!this->configServerPoll())
         return (closeServerFD());
     return (true);
 }
@@ -27,7 +27,7 @@ void    Server::run()
 {
     std::vector<pollfd> fds;
 
-    fds.push_back(pollfd_server);
+    fds.push_back(serverPoll);
 
     while (true)
     {
@@ -63,11 +63,20 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
         handleError("accept failed");
         return (-1);
     }
-    //config client non blocking
+    if (!configClientNonBlocking(newClient))
+    {
+        close(newClient);
+        return (-1);
+    }
+    if (!configClientPoll(fds, newClient))
+    {
+        close(newClient);
+        return (-1);
+    }
     return (newClient);
 }
 
-bool  Server::setupSocket()
+bool    Server::setupSocket()
 {
     this->fd = socket(AF_INET, SOCK_STREAM, 0);
     if (!this->validateServerSocketCreation())
@@ -80,13 +89,23 @@ bool  Server::setupSocket()
     return (true);
 }
 
-bool Server::configServerNonBlocking()
+bool    Server::configServerNonBlocking()
 {
     int flag = fcntl(this->fd, F_GETFL, 0);
 
     if (flag == -1)
         return (handleError("error: fcntl(F_GETFL) failed"));
     if (fcntl(this->fd, F_SETFL, flag | O_NONBLOCK) == -1)
+        return (handleError("error: fcntl(F_SETFL) failed"));
+    return (true);
+}
+
+bool    Server::configClientNonBlocking(int newClient)
+{
+    int flag = fcntl(newClient, F_GETFL, 0);
+    if (flag == -1)
+        return (handleError("error: fcntl(F_GETFL) failed"));
+    if (fcntl(newClient, F_SETFL, flag | O_NONBLOCK) == -1)
         return (handleError("error: fcntl(F_SETFL) failed"));
     return (true);
 }
@@ -133,10 +152,21 @@ bool  Server::socketListener()
     return (true);
 }
 
-bool	Server::configPoll()
+bool	Server::configServerPoll()
 {
-	this->pollfd_server.fd = this->fd;
-	this->pollfd_server.events = POLLIN;
-	this->pollfd_server.revents = 0;
+	this->serverPoll.fd = this->fd;
+	this->serverPoll.events = POLLIN;
+	this->serverPoll.revents = 0;
 	return (true);
+}
+
+bool    Server::configClientPoll(std::vector<pollfd>& fds, int newClient)
+{
+    pollfd  clientPoll;
+
+    clientPoll.fd = newClient;
+    clientPoll.events = POLLIN;
+    clientPoll.revents = 0;
+    fds.push_back(clientPoll);
+    return(true);
 }
