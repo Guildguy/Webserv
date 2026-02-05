@@ -1,4 +1,4 @@
-#include "../includes/server.hpp"
+#include "includes/server.hpp"
 
 Server::Server() : fd(-1) {}
 
@@ -81,7 +81,7 @@ int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
 
 int    Server::acceptNewClient(std::vector<pollfd>& fds)
 {
-    int newClient = accept(this->fd, nullptr, nullptr);
+    int newClient = accept(this->fd, 0, 0);
     
 
     if (newClient == -1)
