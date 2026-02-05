@@ -33,6 +33,7 @@ class  Server
         bool	closeServerFD();
 
 		int		acceptNewClient(std::vector<pollfd>& fds);
+		int    	handleClientData(std::vector<pollfd>& fds, size_t index);
 		bool    configClientNonBlocking(int newClient);
 		bool    configClientPoll(std::vector<pollfd>& fds, int newClient);
 
