@@ -100,16 +100,6 @@ bool    Server::configServerNonBlocking()
     return (true);
 }
 
-bool    Server::configClientNonBlocking(int newClient)
-{
-    int flag = fcntl(newClient, F_GETFL, 0);
-    if (flag == -1)
-        return (handleError("error: fcntl(F_GETFL) failed"));
-    if (fcntl(newClient, F_SETFL, flag | O_NONBLOCK) == -1)
-        return (handleError("error: fcntl(F_SETFL) failed"));
-    return (true);
-}
-
 bool Server::configServerReuseAddress()
 {
     int opt = 1;
@@ -158,6 +148,18 @@ bool	Server::configServerPoll()
 	this->serverPoll.events = POLLIN;
 	this->serverPoll.revents = 0;
 	return (true);
+}
+
+/*********************** CLIENT ************************* */
+
+bool    Server::configClientNonBlocking(int newClient)
+{
+    int flag = fcntl(newClient, F_GETFL, 0);
+    if (flag == -1)
+        return (handleError("error: fcntl(F_GETFL) failed"));
+    if (fcntl(newClient, F_SETFL, flag | O_NONBLOCK) == -1)
+        return (handleError("error: fcntl(F_SETFL) failed"));
+    return (true);
 }
 
 bool    Server::configClientPoll(std::vector<pollfd>& fds, int newClient)
