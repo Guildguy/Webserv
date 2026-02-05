@@ -7,6 +7,7 @@
 #include <poll.h>
 #include <cstdlib>
 #include <cerrno>
+#include <stdio.h>
 #include <fcntl.h>
 #include <vector>
 #include <arpa/inet.h>
