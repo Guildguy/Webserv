@@ -19,19 +19,22 @@ class  Server
     private:
         int					fd;
         struct  sockaddr_in	saddr;
-        struct  pollfd		pollfd_server;
+        struct  pollfd		serverPoll;
 
         bool	configServerNonBlocking();
         bool	configServerReuseAddress();
         bool	ConfigServerAddress(int Port, const std::string& IP);
         bool	bindServerSocket();
         bool	socketListener();
+		bool	configServerPoll();
         
         bool	handleError(const std::string& msg);
         bool	validateServerSocketCreation();
         bool	closeServerFD();
 
 		int		acceptNewClient(std::vector<pollfd>& fds);
+		bool    configClientNonBlocking(int newClient);
+		bool    configClientPoll(std::vector<pollfd>& fds, int newClient);
 
     public:
         Server();
