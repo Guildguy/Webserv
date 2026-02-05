@@ -75,7 +75,6 @@ int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
 
     std::cout << "Received " << bRead << " bytes: " 
     << std::string(buffer, bRead) << std::endl;
-    fds[index].events = POLLOUT;
     return (bRead);
 }
 
