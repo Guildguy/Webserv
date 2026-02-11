@@ -14,11 +14,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "fileDescriptor.hpp"
 
 class  Server
 {
     private:
-        int					_fd;
+        FileDescriptor      _server_fd;
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
