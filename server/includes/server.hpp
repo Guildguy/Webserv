@@ -24,7 +24,6 @@ class  Server
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
-        bool	socketListener();
 		bool	configServerPoll();
         
         bool	handleError(const std::string& msg);

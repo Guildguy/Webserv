@@ -10,8 +10,8 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
         return (handleError("Failed to initialize socket"));
     if (!_serverSocket.setBind())
         return (handleError("Failed to bind"))
-    if (!this->socketListener())
-        return (closeServerFD());
+    if (!_serverSocket.setListen(SOMAXCONN))
+        return (handleError("Failed to listen"));
     if (!this->configServerPoll())
         return (closeServerFD());
     return (true);
@@ -94,13 +94,6 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
         return (-1);
     }
     return (newClient);
-}
-
-bool  Server::socketListener()
-{
-    if (listen(this->fd, SOMAXCONN) < 0)
-        return (handleError("Error: Socket cannot listen!"));
-    return (true);
 }
 
 bool	Server::configServerPoll()
