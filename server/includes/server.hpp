@@ -15,15 +15,16 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "fileDescriptor.hpp"
+#include "serverSocket.hpp"
 
 class  Server
 {
     private:
-        FileDescriptor      _server_fd;
+        FileDescriptor      _serverSocket;
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
-        bool	ConfigServerAddress(int Port, const std::string& IP);
+        bool	ConfigServerAddress(int Port, const std::string& IpAddr);
         bool	bindServerSocket();
         bool	socketListener();
 		bool	configServerPoll();
@@ -40,7 +41,6 @@ class  Server
         Server();
         ~Server();
 
-        bool	setupSocket();
         bool	initialize(int Port, const std::string &IP);
 		void	run();
     
