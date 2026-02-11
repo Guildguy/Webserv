@@ -25,20 +25,22 @@ void FileDescriptor::invalidate()
 
 bool FileDescriptor::setNonBlocking()
 {
+    if (!isValid())
+        return (false);
+
     int flag = fcntl(fd, F_GETFL, 0);
     if (flag == -1)
         return (false);
+
     if (fcntl(fd, F_SETFL, flag | O_NONBLOCK) == -1)
         return (false);
+
     return (true);
 }
 
-bool FileDescriptor::setReuseAddress()
+int  FileDescriptor::get() const
 {
-    int opt = 1;
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-        return (false);
-    return (true);
+    return (_fd);
 }
 
 bool FileDescriptor::operator==(const FileDescriptor& other) const

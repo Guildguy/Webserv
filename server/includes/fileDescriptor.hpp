@@ -2,6 +2,7 @@
 #define FILE_DESCRIPTOR_HPP
 
 #include <fcntl.h>
+#include <unistd.h>
 
 class FileDescriptor
 {
