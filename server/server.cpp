@@ -4,10 +4,10 @@ Server::Server() {}
 
 Server::~Server() {}
 
-bool  Server::initialize(int Port, const std::string &IP)
+bool  Server::initialize(int Port, const std::string &IpAddr)
 {
-    if (!this->setupSocket())
-        return (false);
+    if (!_serverSocket.initialize(Port, IpAddr))
+        return (handleError("Failed to initialize socket"));
     if (!this->ConfigServerAddress(Port, IP))
         return (closeServerFD());
     if (!this->bindServerSocket())
@@ -97,21 +97,6 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
         return (-1);
     }
     return (newClient);
-}
-
-bool    Server::setupSocket()
-{
-    int fd = socket(AF_INET, SOCK_STREAM, 0);
-    _server_fd = FileDescriptor(fd);
-
-    if (!_server_fd.isValid())
-        return (handleError("error: socket creation failed"));
-    if (!_server_fd.setNonBlocking())
-        return (handleError("error: setNonBlocking failed"));
-    
-    if (!_server_fd.setReuseAddress())
-        return (handleError("error: setReuseAddress failed"));
-    return (true);
 }
 
 bool Server::ConfigServerAddress(int Port, const std::string& IP)
