@@ -27,3 +27,18 @@ void FileDescriptor::invalidate()
         _fd = -1;
     }
 }
+
+bool FileDescriptor::setNonBlocking()
+{
+    return (FileDescriptor::setNonBlocking(_fd));
+}
+
+bool FileDescriptor::setNonBlocking(int fd)
+{
+    int flag = fcntl(fd, F_GETFL, 0);
+    if (flag == -1)
+        return (false);
+    if (fcntl(fd, F_SETFL, flag | O_NONBLOCK) == -1)
+        return (false);
+    return (true);
+}
