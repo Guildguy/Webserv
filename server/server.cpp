@@ -105,25 +105,15 @@ bool    Server::setupSocket()
     _server_fd = FileDescriptor(fd);
 
     if (!_server_fd.isValid())
-        return handleError("error: socket creation failed");
-
-    if (!this->configServerNonBlocking())
-        return (closeServerFD());
+        return (handleError("error: socket creation failed"));
+    if (!_server_fd.setNonBlocking())
+        return (handleError("error: setNonBlocking failed"));
+    
     if (!this->configServerReuseAddress())
         return (closeServerFD());
     return (true);
 }
 
-bool    Server::configServerNonBlocking()
-{
-    int flag = fcntl(this->fd, F_GETFL, 0);
-
-    if (flag == -1)
-        return (handleError("error: fcntl(F_GETFL) failed"));
-    if (fcntl(this->fd, F_SETFL, flag | O_NONBLOCK) == -1)
-        return (handleError("error: fcntl(F_SETFL) failed"));
-    return (true);
-}
 
 bool Server::configServerReuseAddress()
 {

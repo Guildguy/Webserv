@@ -23,7 +23,6 @@ class  Server
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
-        bool	configServerNonBlocking();
         bool	configServerReuseAddress();
         bool	ConfigServerAddress(int Port, const std::string& IP);
         bool	bindServerSocket();
