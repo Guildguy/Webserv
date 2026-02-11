@@ -17,7 +17,7 @@ class   ServerSocket
         ~ServerSocket();
 
         bool    initialize(int port, const str::string& ipAddr);
-        bool    configBind();
+        bool    setBind();
         
 };
 

@@ -48,3 +48,10 @@ bool    ServerSocket::configAddr(int port, const std::string& IpAddr)
     _saddr.sin_addr.s_addr = addr;
     return (true);
 }
+
+bool    ServerSocket::setBind()
+{
+    if (bind(_fd.get(), (sockaddr*)&_saddr, sizeof(_saddr)) < 0)
+        return (false);
+    return (true);
+}
