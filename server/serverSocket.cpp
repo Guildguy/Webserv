@@ -55,3 +55,10 @@ bool    ServerSocket::setBind()
         return (false);
     return (true);
 }
+
+bool    ServerSocket::setListen(int backlog)
+{
+    if (listen(_fd.get(), backlog) < 0)
+        return (handleError("Error: Socket cannot listen!"));
+    return (true);
+}
