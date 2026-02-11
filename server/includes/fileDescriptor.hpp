@@ -7,13 +7,19 @@ class FileDescriptor
         int _fd;
 
     public:
-        explicit FileDescriptor();
-        FileDescriptor(int fd);
+        FileDescriptor();
+        explicit FileDescriptor(int fd);
 		~FileDescriptor();
 
         bool    isValid() const;
         int     getValue() const;
         void    invalidate();
+
+        bool    setNonBlocking();
+        bool    setReuseAddress();
+
+        static bool setNonBlocking(int fd);
+        static bool setReuseAddress(int fd);
 
         bool    operator==(const FileDescriptor& other) const;
         bool    operator<(const FileDescriptor& other) const;
