@@ -18,6 +18,7 @@ class   ServerSocket
 
         bool    initialize(int port, const str::string& ipAddr);
         bool    setBind();
+        bool    setListen(int backlog);
         
 };
 
