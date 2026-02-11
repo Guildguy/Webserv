@@ -109,18 +109,8 @@ bool    Server::setupSocket()
     if (!_server_fd.setNonBlocking())
         return (handleError("error: setNonBlocking failed"));
     
-    if (!this->configServerReuseAddress())
-        return (closeServerFD());
-    return (true);
-}
-
-
-bool Server::configServerReuseAddress()
-{
-    int opt = 1;
-
-    if (setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0)
-        return (handleError("error: setsockopt(SO_REUSEADDR) failed"));
+    if (!_server_fd.setReuseAddress())
+        return (handleError("error: setReuseAddress failed"));
     return (true);
 }
 
