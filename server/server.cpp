@@ -1,6 +1,6 @@
 #include "includes/server.hpp"
 
-Server::Server() : fd(-1) {}
+Server::Server() : _fd(-1) {}
 
 Server::~Server()
 {

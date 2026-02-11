@@ -18,7 +18,7 @@
 class  Server
 {
     private:
-        int					fd;
+        int					_fd;
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
