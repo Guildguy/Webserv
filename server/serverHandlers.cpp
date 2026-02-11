@@ -8,10 +8,6 @@ bool    Server::handleError(const std::string& msg)
 
 bool    Server::closeServerFD()
 {
-    if (this->fd != -1)
-    {
-        close(this->fd);
-        this->fd = -1;
-    }
+    _server_fd.invalidate();
     return (false);
 }
