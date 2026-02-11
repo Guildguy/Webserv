@@ -3,9 +3,17 @@
 
 #include "fileDescriptor.hpp"
 
-class   serverSocket
+class   ServerSocket
 {
+    private:
+        FileDescriptor  _fd;
+        sockaddr_in     _saddr;
 
+        bool    createSocket();
+
+    public:
+        ServerSocket();
+        ~ServerSocket();
 };
 
 #endif
