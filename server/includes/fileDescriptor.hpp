@@ -5,6 +5,8 @@ class FileDescriptor
 {
     private:
         int _fd;
+        FileDescriptor(const FileDescriptor&);
+        FileDescriptor& operator=(const FileDescriptor&);
 
     public:
         FileDescriptor();
@@ -12,7 +14,6 @@ class FileDescriptor
 		~FileDescriptor();
 
         bool    isValid() const;
-        int     getValue() const;
         void    invalidate();
 
         bool    setNonBlocking();
