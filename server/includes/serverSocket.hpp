@@ -14,6 +14,8 @@ class   ServerSocket
     public:
         ServerSocket();
         ~ServerSocket();
+
+        bool    initialize(int port, const str::string& ipAddr);
 };
 
 #endif
