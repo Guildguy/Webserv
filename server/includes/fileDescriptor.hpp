@@ -1,6 +1,8 @@
 #ifndef FILE_DESCRIPTOR_HPP
 #define FILE_DESCRIPTOR_HPP
 
+#include <fcntl.h>
+
 class FileDescriptor
 {
     private:
