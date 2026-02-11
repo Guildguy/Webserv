@@ -1,8 +1,6 @@
 #ifndef FILE_DESCRIPTOR_HPP
 #define FILE_DESCRIPTOR_HPP
 
-#include "server.hpp"
-
 class FileDescriptor
 {
     private:
@@ -11,6 +9,7 @@ class FileDescriptor
     public:
         explicit FileDescriptor();
         FileDescriptor(int fd);
+		~FileDescriptor();
 
         bool    isValid() const;
         int     getValue() const;
