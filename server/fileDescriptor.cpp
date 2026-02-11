@@ -55,3 +55,13 @@ bool FileDescriptor::setReuseAddress(int fd)
         return (false);
     return (true);
 }
+
+bool FileDescriptor::operator==(const FileDescriptor& other) const
+{
+    return (_fd == other._fd);
+}
+
+bool FileDescriptor::operator<(const FileDescriptor& other) const
+{
+    return (_fd < other._fd);
+}
