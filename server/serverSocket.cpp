@@ -8,6 +8,8 @@ bool    ServerSocket::initialize(int port, const str:string& ipAddr)
 {
     if (!createSocket())
         return (false);
+    if (!configAddr(port, IpAddr))
+        return (false);
     return (true);
 }
 
@@ -25,5 +27,24 @@ bool    ServerSocket::createSocket()
     if (setsockopt(_fd.get(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
         return (handleError("error: setsockopt failed"));
 
+    return (true);
+}
+
+bool    configAddr(int port, const std::string& IpAddr)
+{
+    _saddr.sin_family = AF_INET;
+    _saddr.sin_port = htons(Port);
+    
+    if (IP == "0.0.0.0" || IP.empty())
+    {
+        _saddr.sin_addr.s_addr = INADDR_ANY;
+        return (true);
+    }
+    
+    in_addr_t addr = inet_addr(IP.c_str());
+    if (addr == INADDR_NONE)
+        return (handleError("error: invalid IP address"));
+    
+    _saddr.sin_addr.s_addr = addr;
     return (true);
 }
