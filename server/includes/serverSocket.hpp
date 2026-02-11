@@ -10,12 +10,14 @@ class   ServerSocket
         sockaddr_in     _saddr;
 
         bool    createSocket();
+        bool    configAddr(int port, const std::string& IpAddr);
 
     public:
         ServerSocket();
         ~ServerSocket();
 
         bool    initialize(int port, const str::string& ipAddr);
+        
 };
 
 #endif

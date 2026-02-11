@@ -8,8 +8,6 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
 {
     if (!_serverSocket.initialize(Port, IpAddr))
         return (handleError("Failed to initialize socket"));
-    if (!this->ConfigServerAddress(Port, IP))
-        return (closeServerFD());
     if (!this->bindServerSocket())
         return (closeServerFD());
     if (!this->socketListener())
@@ -78,7 +76,6 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
 {
     int newClient = accept(this->fd, 0, 0);
     
-
     if (newClient == -1)
     {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -99,24 +96,6 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
     return (newClient);
 }
 
-bool Server::ConfigServerAddress(int Port, const std::string& IP)
-{
-    saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(Port);
-    
-    if (IP == "0.0.0.0" || IP.empty())
-    {
-        saddr.sin_addr.s_addr = INADDR_ANY;
-        return (true);
-    }
-    
-    in_addr_t addr = inet_addr(IP.c_str());
-    if (addr == INADDR_NONE)
-        return (handleError("error: invalid IP address"));
-    
-    saddr.sin_addr.s_addr = addr;
-    return (true);
-}
 
 bool  Server::bindServerSocket()
 {

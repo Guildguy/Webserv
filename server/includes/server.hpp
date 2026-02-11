@@ -24,7 +24,6 @@ class  Server
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
-        bool	ConfigServerAddress(int Port, const std::string& IpAddr);
         bool	bindServerSocket();
         bool	socketListener();
 		bool	configServerPoll();
