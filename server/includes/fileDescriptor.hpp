@@ -5,6 +5,7 @@ class FileDescriptor
 {
     private:
         int _fd;
+
         FileDescriptor(const FileDescriptor&);
         FileDescriptor& operator=(const FileDescriptor&);
 
@@ -19,8 +20,7 @@ class FileDescriptor
         bool    setNonBlocking();
         bool    setReuseAddress();
 
-        static bool setNonBlocking(int fd);
-        static bool setReuseAddress(int fd);
+        int     get() const;
 
         bool    operator==(const FileDescriptor& other) const;
         bool    operator<(const FileDescriptor& other) const;
