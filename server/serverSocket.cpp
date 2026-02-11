@@ -4,6 +4,13 @@ ServerSocket::ServerSocket() {}
 
 ServerSocket::~ServerSocket() {}
 
+bool    ServerSocket::initialize(int port, const str:string& ipAddr)
+{
+    if (!createSocket())
+        return (false);
+    return (true);
+}
+
 bool    ServerSocket::createSocket()
 {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
