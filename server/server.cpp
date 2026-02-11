@@ -1,12 +1,8 @@
 #include "includes/server.hpp"
 
-Server::Server() : _ServerFd(-1) {}
+Server::Server() {}
 
-Server::~Server()
-{
-    if (this->fd != -1)
-        closeServerFD();
-}
+Server::~Server() {}
 
 bool  Server::initializeServer(int Port, const std::string &IP)
 {
@@ -105,9 +101,11 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
 
 bool    Server::setupSocket()
 {
-    this->fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (!this->validateServerSocketCreation())
-        return (false);
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    _server_fd = FileDescriptor(fd);
+
+    if (!_server_fd.isValid())
+        return handleError("error: socket creation failed");
 
     if (!this->configServerNonBlocking())
         return (closeServerFD());

@@ -31,7 +31,6 @@ class  Server
 		bool	configServerPoll();
         
         bool	handleError(const std::string& msg);
-        bool	validateServerSocketCreation();
         bool	closeServerFD();
 
 		int		acceptNewClient(std::vector<pollfd>& fds);
