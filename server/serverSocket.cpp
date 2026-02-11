@@ -30,7 +30,7 @@ bool    ServerSocket::createSocket()
     return (true);
 }
 
-bool    configAddr(int port, const std::string& IpAddr)
+bool    ServerSocket::configAddr(int port, const std::string& IpAddr)
 {
     _saddr.sin_family = AF_INET;
     _saddr.sin_port = htons(Port);
