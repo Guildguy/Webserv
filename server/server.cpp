@@ -4,7 +4,7 @@ Server::Server() {}
 
 Server::~Server() {}
 
-bool  Server::initializeServer(int Port, const std::string &IP)
+bool  Server::initialize(int Port, const std::string &IP)
 {
     if (!this->setupSocket())
         return (false);

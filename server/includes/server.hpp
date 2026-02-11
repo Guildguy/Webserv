@@ -41,7 +41,7 @@ class  Server
         ~Server();
 
         bool	setupSocket();
-        bool	initializeServer(int Port, const std::string &IP);
+        bool	initialize(int Port, const std::string &IP);
 		void	run();
     
 };
