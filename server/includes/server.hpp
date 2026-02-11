@@ -24,7 +24,6 @@ class  Server
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
 
-        bool	bindServerSocket();
         bool	socketListener();
 		bool	configServerPoll();
         

@@ -8,8 +8,8 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
 {
     if (!_serverSocket.initialize(Port, IpAddr))
         return (handleError("Failed to initialize socket"));
-    if (!this->bindServerSocket())
-        return (closeServerFD());
+    if (!_serverSocket.setBind())
+        return (handleError("Failed to bind"))
     if (!this->socketListener())
         return (closeServerFD());
     if (!this->configServerPoll())
@@ -94,14 +94,6 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
         return (-1);
     }
     return (newClient);
-}
-
-
-bool  Server::bindServerSocket()
-{
-    if (bind(this->fd, (struct sockaddr*)&this->saddr, sizeof(this->saddr)) < 0)
-        return (handleError("error: bind failed"));
-    return (true);
 }
 
 bool  Server::socketListener()
