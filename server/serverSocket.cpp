@@ -62,3 +62,8 @@ bool    ServerSocket::setListen(int backlog)
         return (handleError("Error: Socket cannot listen!"));
     return (true);
 }
+
+int     ServerSocket::getPollFd() const
+{
+    return (_fd.get());
+}
