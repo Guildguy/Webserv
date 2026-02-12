@@ -19,14 +19,13 @@ class  Server
     private:
         ServerSocket                    _serverSocket;
         std::vector<pollfd>             _pollFds;
-        struct  sockaddr_in	saddr;
-        struct  pollfd		serverPoll;
         
+		void	acceptNewClient();
+		int    	handleClientData(std::vector<pollfd>& fds, size_t index);
+
         bool	handleError(const std::string& msg);
         bool	closeServerFD();
 
-		int		acceptNewClient(std::vector<pollfd>& fds);
-		int    	handleClientData(std::vector<pollfd>& fds, size_t index);
 		bool    configClientNonBlocking(int newClient);
 		bool    configClientPoll(std::vector<pollfd>& fds, int newClient);
 
