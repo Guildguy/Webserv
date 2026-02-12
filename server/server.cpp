@@ -42,36 +42,28 @@ void    Server::run()
                 acceptNewClient();
                 continue;
             }
-            handleClientData(fds, i);
+            handleClientData(i);
         }
     }
 }
 
-int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
+void    Server::handleClientData(size_t index)
 {
     char    buffer[1024];
-    int     clientFd = fds[index].fd;
+    int     clientFd = _pollFds[index].fd;
     ClientSocket    client(clientFd);
 
     ssize_t  bRead = client.receiveData(buffer, sizeof(buffer));
-    if (bRead == 0)
+    if (bRead <= 0)
     {
-        close(clientFd);
-        fds.erase(fds.begin() + index);
-        return (0);
-    }
-    if (bRead < 0)
-    {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-                return (-1);
-        close(clientFd);
-        fds.erase(fds.begin() + index);
-        return (-1);
+        std::cout << "Client disconnected: fd " << clientFd << std::endl;
+        client.invalidate();
+        _pollFds.erase(_pollFds.begin() + index);
+        return;
     }
 
     std::cout << "Received " << bRead << " bytes: " 
     << std::string(buffer, bRead) << std::endl;
-    return (bRead);
 }
 
 void    Server::acceptNewClient()
@@ -95,27 +87,4 @@ void    Server::acceptNewClient()
     fds.push_back(clientPoll);
     
     std::cout << "New client connected: fd" << clientFd << std::endl;
-}
-
-/*********************** CLIENT ************************* */
-
-bool    Server::configClientNonBlocking(int newClient)
-{
-    int flag = fcntl(newClient, F_GETFL, 0);
-    if (flag == -1)
-        return (handleError("error: fcntl(F_GETFL) failed"));
-    if (fcntl(newClient, F_SETFL, flag | O_NONBLOCK) == -1)
-        return (handleError("error: fcntl(F_SETFL) failed"));
-    return (true);
-}
-
-bool    Server::configClientPoll(std::vector<pollfd>& fds, int newClient)
-{
-    pollfd  clientPoll;
-
-    clientPoll.fd = newClient;
-    clientPoll.events = POLLIN;
-    clientPoll.revents = 0;
-    fds.push_back(clientPoll);
-    return(true);
 }

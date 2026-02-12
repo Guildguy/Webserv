@@ -26,9 +26,6 @@ class  Server
         bool	handleError(const std::string& msg);
         bool	closeServerFD();
 
-		bool    configClientNonBlocking(int newClient);
-		bool    configClientPoll(std::vector<pollfd>& fds, int newClient);
-
     public:
         Server();
         ~Server();
