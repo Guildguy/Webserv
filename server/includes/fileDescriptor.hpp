@@ -21,7 +21,6 @@ class FileDescriptor
         void    invalidate();
 
         bool    setNonBlocking();
-        bool    setReuseAddress();
 
         int     get() const;
 
