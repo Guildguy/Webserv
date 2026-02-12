@@ -84,6 +84,7 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
     if (newClient < 0)
         return ;
 
+    ClientSocket    client(clientFd);
     if (!configClientNonBlocking(newClient))
     {
         close(newClient);
