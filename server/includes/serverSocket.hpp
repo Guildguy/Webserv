@@ -19,10 +19,10 @@ class   ServerSocket
         bool    initialize(int port, const str::string& ipAddr);
         bool    setBind();
         bool    setListen(int backlog);
+        int     setAccept()ç
 
         int     getPollFd() const;
         bool    isValid() const;
-        
 };
 
 #endif

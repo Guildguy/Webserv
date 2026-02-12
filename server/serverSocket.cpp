@@ -56,6 +56,11 @@ bool    ServerSocket::setBind()
     return (true);
 }
 
+int     ServerSocket::setAccept()
+{
+    return (accept(fd.get(), NULL, NULL));
+}
+
 bool    ServerSocket::setListen(int backlog)
 {
     if (listen(_fd.get(), backlog) < 0)
