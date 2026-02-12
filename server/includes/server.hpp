@@ -20,11 +20,10 @@
 class  Server
 {
     private:
-        FileDescriptor      _serverSocket;
+        ServerSocket                    _serverSocket;
+        std::vector<pollfd>             _pollFds;
         struct  sockaddr_in	saddr;
         struct  pollfd		serverPoll;
-
-		bool	configServerPoll();
         
         bool	handleError(const std::string& msg);
         bool	closeServerFD();

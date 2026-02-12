@@ -12,8 +12,13 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
         return (handleError("Failed to bind"))
     if (!_serverSocket.setListen(SOMAXCONN))
         return (handleError("Failed to listen"));
-    if (!this->configServerPoll())
-        return (closeServerFD());
+    
+    pollfd  serverPoll;
+    serverPoll.fd = _serverSocket.getPollFd();
+    serverPoll.events = POLLIN;
+    serverPoll.revents = 0;
+    _pollFds.push_back(serverPoll);
+    
     return (true);
 }
 
@@ -94,14 +99,6 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
         return (-1);
     }
     return (newClient);
-}
-
-bool	Server::configServerPoll()
-{
-	this->serverPoll.fd = this->fd;
-	this->serverPoll.events = POLLIN;
-	this->serverPoll.revents = 0;
-	return (true);
 }
 
 /*********************** CLIENT ************************* */
