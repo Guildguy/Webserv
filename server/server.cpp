@@ -79,15 +79,11 @@ int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
 
 int    Server::acceptNewClient(std::vector<pollfd>& fds)
 {
-    int newClient = accept(this->fd, 0, 0);
+    int newClient = -serverSocket.setAccept();
     
-    if (newClient == -1)
-    {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-            return (-1);
-        handleError("accept failed");
-        return (-1);
-    }
+    if (newClient < 0)
+        return ;
+    
     if (!configClientNonBlocking(newClient))
     {
         close(newClient);
