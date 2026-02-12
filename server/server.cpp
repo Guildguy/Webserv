@@ -79,11 +79,11 @@ int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
 
 int    Server::acceptNewClient(std::vector<pollfd>& fds)
 {
-    int newClient = -serverSocket.setAccept();
+    int newClient = _serverSocket.setAccept();
     
     if (newClient < 0)
         return ;
-    
+
     if (!configClientNonBlocking(newClient))
     {
         close(newClient);
