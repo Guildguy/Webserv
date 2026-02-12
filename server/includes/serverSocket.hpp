@@ -21,6 +21,7 @@ class   ServerSocket
         bool    setListen(int backlog);
 
         int     getPollFd() const;
+        bool    isValid() const;
         
 };
 

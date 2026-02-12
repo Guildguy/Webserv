@@ -67,3 +67,8 @@ int     ServerSocket::getPollFd() const
 {
     return (_fd.get());
 }
+
+bool    ServerSocket::isValid() const
+{
+    return (_fd.isValid());
+}
