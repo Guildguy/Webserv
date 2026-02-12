@@ -23,6 +23,7 @@ class   ServerSocket
 
         int     getPollFd() const;
         bool    isValid() const;
+        
 };
 
 #endif

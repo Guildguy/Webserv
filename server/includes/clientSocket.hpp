@@ -20,6 +20,7 @@ class   ClientSocket
 
             int     getPollFd() const;
             bool    isValid() const;
+
 }
 
 #endif

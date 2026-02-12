@@ -47,25 +47,6 @@ void    Server::run()
     }
 }
 
-void    Server::handleClientData(size_t index)
-{
-    char    buffer[1024];
-    int     clientFd = _pollFds[index].fd;
-    ClientSocket    client(clientFd);
-
-    ssize_t  bRead = client.receiveData(buffer, sizeof(buffer));
-    if (bRead <= 0)
-    {
-        std::cout << "Client disconnected: fd " << clientFd << std::endl;
-        client.invalidate();
-        _pollFds.erase(_pollFds.begin() + index);
-        return;
-    }
-
-    std::cout << "Received " << bRead << " bytes: " 
-    << std::string(buffer, bRead) << std::endl;
-}
-
 void    Server::acceptNewClient()
 {
     int newClient = _serverSocket.setAccept();
@@ -87,4 +68,23 @@ void    Server::acceptNewClient()
     fds.push_back(clientPoll);
     
     std::cout << "New client connected: fd" << clientFd << std::endl;
+}
+
+void    Server::handleClientData(size_t index)
+{
+    char    buffer[1024];
+    int     clientFd = _pollFds[index].fd;
+    ClientSocket    client(clientFd);
+
+    ssize_t  bRead = client.receiveData(buffer, sizeof(buffer));
+    if (bRead <= 0)
+    {
+        std::cout << "Client disconnected: fd " << clientFd << std::endl;
+        client.invalidate();
+        _pollFds.erase(_pollFds.begin() + index);
+        return;
+    }
+
+    std::cout << "Received " << bRead << " bytes: " 
+    << std::string(buffer, bRead) << std::endl;
 }

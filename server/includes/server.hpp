@@ -24,7 +24,6 @@ class  Server
 		int    	handleClientData(std::vector<pollfd>& fds, size_t index);
 
         bool	handleError(const std::string& msg);
-        bool	closeServerFD();
 
     public:
         Server();

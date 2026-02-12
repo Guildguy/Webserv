@@ -29,6 +29,7 @@ class FileDescriptor
 
         bool    operator==(const FileDescriptor& other) const;
         bool    operator<(const FileDescriptor& other) const;
+        
 };
 
 #endif

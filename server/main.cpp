@@ -6,7 +6,7 @@ int main()
 
     std::cout << "Initializing server on port 8080..." << std::endl;
     
-    if (!server.initializeServer(8080, "0.0.0.0"))
+    if (!server.initialize(8080, "0.0.0.0"))
     {
         std::cerr << "Failed to initialize server!" << std::endl;
         return 1;
