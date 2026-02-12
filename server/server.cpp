@@ -55,8 +55,9 @@ int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
 {
     char    buffer[1024];
     int     clientFd = fds[index].fd;
+    ClientSocket    client(clientFd);
 
-    ssize_t  bRead = recv(clientFd, buffer, sizeof(buffer), 0);
+    ssize_t  bRead = client.receiveData(buffer, sizeof(buffer));
     if (bRead == 0)
     {
         close(clientFd);
