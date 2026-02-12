@@ -1,0 +1,439 @@
+HPP
+
+// fileDescriptor.hpp
+#ifndef FILE_DESCRIPTOR_HPP
+#define FILE_DESCRIPTOR_HPP
+
+#include <fcntl.h>
+
+class FileDescriptor
+{
+    private:
+        int _fd;
+
+        FileDescriptor(const FileDescriptor&);
+        FileDescriptor& operator=(const FileDescriptor&);
+
+    public:
+        FileDescriptor();
+        explicit FileDescriptor(int fd);
+        ~FileDescriptor();
+
+        bool    isValid() const;
+        void    close();
+        
+        bool    setNonBlocking();
+        int     get() const;
+        
+        bool    operator==(const FileDescriptor& other) const;
+        bool    operator<(const FileDescriptor& other) const;
+};
+
+#endif
+
+/************************************** */
+
+// serverSocket.hpp
+#ifndef SERVER_SOCKET_HPP
+#define SERVER_SOCKET_HPP
+
+#include "fileDescriptor.hpp"
+#include <netinet/in.h>
+#include <string>
+
+class ServerSocket
+{
+    private:
+        FileDescriptor  _fd;
+        sockaddr_in     _address;
+
+        bool    createSocket();
+        bool    configureAddress(int port, const std::string& ip);
+
+    public:
+        ServerSocket();
+        ~ServerSocket();
+
+        // ✅ Responsabilidades de ServerSocket
+        bool    initialize(int port, const std::string& ip);
+        bool    bind();
+        bool    listen(int backlog);
+        int     accept();
+        
+        int     getPollFd() const;
+        bool    isValid() const;
+};
+
+#endif
+
+/************************************** */
+
+// clientSocket.hpp  
+#ifndef CLIENT_SOCKET_HPP
+#define CLIENT_SOCKET_HPP
+
+#include "fileDescriptor.hpp"
+#include <string>
+
+class ClientSocket
+{
+    private:
+        FileDescriptor _fd;
+
+    public:
+        ClientSocket();
+        explicit ClientSocket(int fd);
+        ~ClientSocket();
+
+        // ✅ Responsabilidades de ClientSocket
+        ssize_t receive(char* buffer, size_t size);
+        ssize_t send(const char* data, size_t size);
+        void    close();
+        
+        int     getPollFd() const;
+        bool    isValid() const;
+};
+
+#endif
+
+/************************************** */
+
+// server.hpp
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
+#include "serverSocket.hpp"
+#include "clientSocket.hpp"
+#include <vector>
+#include <poll.h>
+
+class Server
+{
+    private:
+        ServerSocket            _serverSocket;
+        std::vector<pollfd>     _pollFds;
+        
+        void    acceptNewClient();
+        void    handleClientData(size_t index);
+        bool    handleError(const std::string& msg);
+
+    public:
+        Server();
+        ~Server();
+
+        bool    initialize(int port, const std::string& ip);
+        void    run();
+};
+
+#endif
+
+CPP
+/************************************** */
+
+// serverSocket.cpp
+#include "includes/serverSocket.hpp"
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+ServerSocket::ServerSocket() {}
+
+ServerSocket::~ServerSocket() {}
+
+bool ServerSocket::initialize(int port, const std::string& ip)
+{
+    if (!createSocket())
+        return (false);
+    if (!configureAddress(port, ip))
+        return (false);
+    return (true);
+}
+
+bool ServerSocket::createSocket()
+{
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    _fd = FileDescriptor(fd);
+    
+    if (!_fd.isValid())
+        return (false);
+    if (!_fd.setNonBlocking())
+        return (false);
+        
+    // Set SO_REUSEADDR
+    int opt = 1;
+    if (setsockopt(_fd.get(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+        return (false);
+    
+    return (true);
+}
+
+bool ServerSocket::configureAddress(int port, const std::string& ip)
+{
+    _address.sin_family = AF_INET;
+    _address.sin_port = htons(port);
+    
+    if (ip == "0.0.0.0" || ip.empty())
+        _address.sin_addr.s_addr = INADDR_ANY;
+    else
+    {
+        in_addr_t addr = inet_addr(ip.c_str());
+        if (addr == INADDR_NONE)
+            return (false);
+        _address.sin_addr.s_addr = addr;
+    }
+    return (true);
+}
+
+// ✅ ServerSocket tem a responsabilidade de bind
+bool ServerSocket::bind()
+{
+    if (::bind(_fd.get(), (sockaddr*)&_address, sizeof(_address)) < 0)
+        return (false);
+    return (true);
+}
+
+// ✅ ServerSocket tem a responsabilidade de listen
+bool ServerSocket::listen(int backlog)
+{
+    if (::listen(_fd.get(), backlog) < 0)
+        return (false);
+    return (true);
+}
+
+// ✅ ServerSocket tem a responsabilidade de accept
+int ServerSocket::accept()
+{
+    return (::accept(_fd.get(), NULL, NULL));
+}
+
+int ServerSocket::getPollFd() const
+{
+    return (_fd.get());
+}
+
+bool ServerSocket::isValid() const
+{
+    return (_fd.isValid());
+}
+
+/************************************** */
+
+// fileDescriptor.cpp
+#include "includes/fileDescriptor.hpp"
+#include <unistd.h>
+
+FileDescriptor::FileDescriptor() : _fd(-1) {}
+
+FileDescriptor::FileDescriptor(int fd) : _fd(fd) {}
+
+FileDescriptor::~FileDescriptor()
+{
+    close();
+}
+
+bool FileDescriptor::isValid() const
+{
+    return (_fd >= 0);
+}
+
+void FileDescriptor::close()
+{
+    if (_fd != -1)
+    {
+        ::close(_fd);
+        _fd = -1;
+    }
+}
+
+bool FileDescriptor::setNonBlocking()
+{
+    if (!isValid())
+        return (false);
+    
+    int flags = fcntl(_fd, F_GETFL, 0);
+    if (flags == -1)
+        return (false);
+    
+    if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1)
+        return (false);
+    
+    return (true);
+}
+
+int FileDescriptor::get() const
+{
+    return (_fd);
+}
+
+bool FileDescriptor::operator==(const FileDescriptor& other) const
+{
+    return (_fd == other._fd);
+}
+
+bool FileDescriptor::operator<(const FileDescriptor& other) const
+{
+    return (_fd < other._fd);
+}
+
+/************************************** */
+
+// server.cpp
+#include "includes/server.hpp"
+#include <iostream>
+
+Server::Server() {}
+
+Server::~Server() {}
+
+bool Server::initialize(int port, const std::string& ip)
+{
+    if (!_serverSocket.initialize(port, ip))
+        return (handleError("Failed to initialize socket"));
+    
+    if (!_serverSocket.bind())
+        return (handleError("Failed to bind socket"));
+    
+    if (!_serverSocket.listen(SOMAXCONN))
+        return (handleError("Failed to listen on socket"));
+    
+    // Prepara poll do servidor
+    pollfd serverPoll;
+    serverPoll.fd = _serverSocket.getPollFd();
+    serverPoll.events = POLLIN;
+    serverPoll.revents = 0;
+    _pollFds.push_back(serverPoll);
+    
+    return (true);
+}
+
+void Server::run()
+{
+    while (true)
+    {
+        int ret = poll(_pollFds.data(), _pollFds.size(), -1);
+        
+        if (ret < 0)
+        {
+            handleError("poll failed");
+            break;
+        }
+        
+        for (size_t i = 0; i < _pollFds.size(); i++)
+        {
+            if (!(_pollFds[i].revents & POLLIN))
+                continue;
+            
+            if (i == 0)
+            {
+                acceptNewClient();
+                continue;
+            }
+            
+            handleClientData(i);
+        }
+    }
+}
+
+void Server::acceptNewClient()
+{
+    int clientFd = _serverSocket.accept();
+    
+    // Sem verificação de errno - apenas valida retorno
+    if (clientFd < 0)
+        return;
+    
+    ClientSocket client(clientFd);
+    
+    if (!client.isValid())
+    {
+        client.close();
+        return;
+    }
+    
+    // Adiciona ao poll
+    pollfd clientPoll;
+    clientPoll.fd = client.getPollFd();
+    clientPoll.events = POLLIN;
+    clientPoll.revents = 0;
+    _pollFds.push_back(clientPoll);
+    
+    std::cout << "New client connected: fd " << clientFd << std::endl;
+}
+
+void Server::handleClientData(size_t index)
+{
+    char buffer[1024];
+    int clientFd = _pollFds[index].fd;
+    ClientSocket client(clientFd);
+    
+    ssize_t bytesRead = client.receive(buffer, sizeof(buffer));
+    
+    // Sem errno - apenas trata retorno
+    if (bytesRead <= 0)
+    {
+        std::cout << "Client disconnected: fd " << clientFd << std::endl;
+        client.close();
+        _pollFds.erase(_pollFds.begin() + index);
+        return;
+    }
+    
+    std::cout << "Received " << bytesRead << " bytes: " 
+              << std::string(buffer, bytesRead) << std::endl;
+}
+
+bool Server::handleError(const std::string& msg)
+{
+    perror(msg.c_str());
+    return (false);
+}
+
+/************************************** */
+
+// clientSocket.cpp
+#include "includes/clientSocket.hpp"
+#include <sys/socket.h>
+#include <unistd.h>
+
+ClientSocket::ClientSocket() : _fd(-1) {}
+
+ClientSocket::ClientSocket(int fd) : _fd(fd)
+{
+    if (_fd.isValid())
+        _fd.setNonBlocking();
+}
+
+ClientSocket::~ClientSocket()
+{
+    close();
+}
+
+ssize_t ClientSocket::receive(char* buffer, size_t size)
+{
+    if (!_fd.isValid())
+        return (-1);
+    
+    return (recv(_fd.get(), buffer, size, 0));
+}
+
+ssize_t ClientSocket::send(const char* data, size_t size)
+{
+    if (!_fd.isValid())
+        return (-1);
+    
+    return (::send(_fd.get(), data, size, 0));
+}
+
+void ClientSocket::close()
+{
+    _fd.close();
+}
+
+int ClientSocket::getPollFd() const
+{
+    return (_fd.get());
+}
+
+bool ClientSocket::isValid() const
+{
+    return (_fd.isValid());
+}
