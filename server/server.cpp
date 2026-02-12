@@ -24,26 +24,22 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
 
 void    Server::run()
 {
-    std::vector<pollfd> fds;
-
-    fds.push_back(serverPoll);
-
     while (true)
     {
-        int ret = poll(fds.data(), fds.size(), -1);
+        int ret = poll(_pollFds.data(), _pollFds.size(), -1);
 
         if (ret < 0)
         {
             handleError("poll failed");
             break;
         }
-        for (size_t i = 0; i < fds.size(); i++)
+        for (size_t i = 0; i < _pollFds.size(); i++)
         {
-            if (!(fds[i].revents & POLLIN))
+            if (!(_pollFds[i].revents & POLLIN))
                 continue;
             if (i == 0)
             {
-                acceptNewClient(fds);
+                acceptNewClient();
                 continue;
             }
             handleClientData(fds, i);
@@ -78,7 +74,7 @@ int    Server::handleClientData(std::vector<pollfd>& fds, size_t index)
     return (bRead);
 }
 
-int    Server::acceptNewClient(std::vector<pollfd>& fds)
+void    Server::acceptNewClient()
 {
     int newClient = _serverSocket.setAccept();
     
@@ -86,17 +82,19 @@ int    Server::acceptNewClient(std::vector<pollfd>& fds)
         return ;
 
     ClientSocket    client(clientFd);
-    if (!configClientNonBlocking(newClient))
+    if (client.isValid())
     {
-        close(newClient);
-        return (-1);
+        client.invalidate();
+        return;
     }
-    if (!configClientPoll(fds, newClient))
-    {
-        close(newClient);
-        return (-1);
-    }
-    return (newClient);
+    
+    pollfd  clientPoll;
+    clientPoll.fd = client.getPollFd();
+    clientPoll.events = POLLIN;
+    clientPoll.revents = 0;
+    fds.push_back(clientPoll);
+    
+    std::cout << "New client connected: fd" << clientFd << std::endl;
 }
 
 /*********************** CLIENT ************************* */
