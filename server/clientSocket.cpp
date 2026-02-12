@@ -22,3 +22,9 @@ bool    ClientSocket::isValid() const
 {
     return (_fd.isValid());
 }
+
+int     ClientSocket::getPollFd() const
+{
+    return (_fd.getPollFd);
+}
+
