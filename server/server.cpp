@@ -9,9 +9,9 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
     if (!_serverSocket.initialize(Port, IpAddr))
         return (handleError("Failed to initialize socket"));
     if (!_serverSocket.setBind())
-        return (handleError("Failed to bind"))
+        return (handleError("Failed to bind socket"))
     if (!_serverSocket.setListen(SOMAXCONN))
-        return (handleError("Failed to listen"));
+        return (handleError("Failed to listen on socket"));
     
     pollfd  serverPoll;
     serverPoll.fd = _serverSocket.getPollFd();
