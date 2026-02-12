@@ -30,10 +30,13 @@ int     ClientSocket::getPollFd() const
 
 ssize_t ClientSocket::receiveData(char* buffer, size_t size)
 {
+    if (!_fd.isValid())
+        return (-1);
 
+    return (recv(_fd.get(), buffer, size, 0));
 }
 
 ssize_t ClientSocket::sendData(const char* data, size_t size)
 {
-    
+
 }
