@@ -2,6 +2,23 @@
 
 ClientSocket::ClientSocket() : _fd(-1) {}
 
-ClientSocket::ClientSocket(int fd) : _fd(fd) {}
+ClientSocket::ClientSocket(int fd) : _fd(fd)
+{
+    if (_fd.isValid())
+        _fd.setNonBlocking();
+}
 
-clientSocket::~ClientSocket() {}
+clientSocket::~ClientSocket()
+{
+    invalidate();
+}
+
+void    ClientSocket::invalidate()
+{
+    _fd.invalidate();
+}
+
+bool    ClientSocket::isValid() const 
+{
+    return (_fd.isValid());
+}
