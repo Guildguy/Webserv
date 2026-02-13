@@ -6,7 +6,9 @@ Server::~Server() {}
 
 bool  Server::initialize(int Port, const std::string &IpAddr)
 {
-    if (!_serverSocket.initialize(Port, IpAddr))
+    _serverSocket = ServerSocket(Port, IpAddr);
+    
+    if (!_serverSocket.isValid())
         return (handleError("Failed to initialize socket"));
     if (!_serverSocket.setBind())
         return (handleError("Failed to bind socket"));
