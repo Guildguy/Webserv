@@ -1,14 +1,15 @@
 #include "includes/serverSocket.hpp"
 
-ServerSocket::ServerSocket() : _fd(-1)
+ServerSocket::ServerSocket() 
+: _fd(-1)
 {
     _saddr.sin_family = AF_INET;
     _saddr.sin_port = 0;
     _saddr.sin_addr.s_addr = INADDR_ANY;
 }
 
-ServerSocket::ServerSocket(int port, const std::string& ipAddr)
-    : _fd(socket(AF_INET, SOCK_STREAM, 0))
+ServerSocket::ServerSocket(int port, const std::string& ipAddr) 
+: _fd(socket(AF_INET, SOCK_STREAM, 0))
 {
     if (!_fd.isValid())
         return;
