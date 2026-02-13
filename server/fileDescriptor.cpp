@@ -28,11 +28,11 @@ bool FileDescriptor::setNonBlocking()
     if (!isValid())
         return (false);
 
-    int flag = fcntl(fd, F_GETFL, 0);
+    int flag = fcntl(_fd, F_GETFL, 0);
     if (flag == -1)
         return (false);
 
-    if (fcntl(fd, F_SETFL, flag | O_NONBLOCK) == -1)
+    if (fcntl(_fd, F_SETFL, flag | O_NONBLOCK) == -1)
         return (false);
 
     return (true);

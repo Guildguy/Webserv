@@ -1,52 +1,55 @@
 #include "includes/serverSocket.hpp"
 
-ServerSocket::ServerSocket() {}
-
-ServerSocket::~ServerSocket() {}
-
-bool    ServerSocket::initialize(int port, const str:string& ipAddr)
+ServerSocket::ServerSocket() : _fd(-1)
 {
-    if (!createSocket())
-        return (false);
-    if (!configAddr(port, IpAddr))
-        return (false);
-    return (true);
+    _saddr.sin_family = AF_INET;
+    _saddr.sin_port = 0;
+    _saddr.sin_addr.s_addr = INADDR_ANY;
 }
 
-bool    ServerSocket::createSocket()
+ServerSocket::ServerSocket(int port, const std::string& ipAddr)
+    : _fd(socket(AF_INET, SOCK_STREAM, 0))
 {
-    int fd = socket(AF_INET, SOCK_STREAM, 0);
-    _fd = FileDescriptor(fd);
-
     if (!_fd.isValid())
-        return (handleError("error: socket creation failed"));
+        return;
+    
     if (!_fd.setNonBlocking())
-        return (handleError("error: setNonBlocking failed"));
+    {
+        _fd.invalidate();
+        return;
+    }
     
     int opt = 1;
     if (setsockopt(_fd.get(), SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-        return (handleError("error: setsockopt failed"));
-
-    return (true);
-}
-
-bool    ServerSocket::configAddr(int port, const std::string& IpAddr)
-{
-    _saddr.sin_family = AF_INET;
-    _saddr.sin_port = htons(Port);
-    
-    if (IP == "0.0.0.0" || IP.empty())
     {
-        _saddr.sin_addr.s_addr = INADDR_ANY;
-        return (true);
+        _fd.invalidate();
+        return;
     }
     
-    in_addr_t addr = inet_addr(IP.c_str());
+    configAddr(port, ipAddr);
+}
+
+ServerSocket::~ServerSocket() {}
+
+void    ServerSocket::configAddr(int port, const std::string& ipAddr)
+{
+    _saddr.sin_family = AF_INET;
+    _saddr.sin_port = htons(port);
+    
+    if (ipAddr == "0.0.0.0" || ipAddr.empty())
+    {
+        _saddr.sin_addr.s_addr = INADDR_ANY;
+        return;
+    }
+    
+    in_addr_t addr = inet_addr(ipAddr.c_str());
     if (addr == INADDR_NONE)
-        return (handleError("error: invalid IP address"));
+    {
+        _fd.invalidate();
+        return;
+    }
     
     _saddr.sin_addr.s_addr = addr;
-    return (true);
 }
 
 bool    ServerSocket::setBind()
@@ -58,13 +61,13 @@ bool    ServerSocket::setBind()
 
 int     ServerSocket::setAccept()
 {
-    return (accept(fd.get(), NULL, NULL));
+    return (accept(_fd.get(), NULL, NULL));
 }
 
 bool    ServerSocket::setListen(int backlog)
 {
     if (listen(_fd.get(), backlog) < 0)
-        return (handleError("Error: Socket cannot listen!"));
+        return (false);
     return (true);
 }
 

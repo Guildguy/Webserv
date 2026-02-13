@@ -1,16 +1,7 @@
 #ifndef  SERVER_HPP
 #define  SERVER_HPP
 
-#include <iostream>
-#include <signal.h>
-#include <unistd.h>
-#include <poll.h>
-#include <cstdlib>
-#include <cerrno>
-#include <stdio.h>
-#include <fcntl.h>
-#include <vector>
-#include <arpa/inet.h>
+#include "fileDescriptor.hpp"
 #include "serverSocket.hpp"
 #include "clientSocket.hpp"
 
@@ -21,7 +12,7 @@ class  Server
         std::vector<pollfd>             _pollFds;
         
 		void	acceptNewClient();
-		int    	handleClientData(std::vector<pollfd>& fds, size_t index);
+		void   	handleClientData(size_t index);
 
         bool	handleError(const std::string& msg);
 

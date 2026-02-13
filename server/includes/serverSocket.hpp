@@ -1,6 +1,10 @@
 #ifndef SERVERSOCKET_HPP
 #define SERVERSOCKET_HPP
 
+#include <string>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "fileDescriptor.hpp"
 
 class   ServerSocket
@@ -9,14 +13,12 @@ class   ServerSocket
         FileDescriptor  _fd;
         sockaddr_in     _saddr;
 
-        bool    createSocket();
-        bool    configAddr(int port, const std::string& IpAddr);
+        void    configAddr(int port, const std::string& ipAddr);
 
     public:
         ServerSocket();
+        ServerSocket(int port, const std::string& ipAddr);
         ~ServerSocket();
-
-        bool    initialize(int port, const str::string& ipAddr);
         bool    setBind();
         bool    setListen(int backlog);
         int     setAccept();

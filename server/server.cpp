@@ -9,7 +9,7 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
     if (!_serverSocket.initialize(Port, IpAddr))
         return (handleError("Failed to initialize socket"));
     if (!_serverSocket.setBind())
-        return (handleError("Failed to bind socket"))
+        return (handleError("Failed to bind socket"));
     if (!_serverSocket.setListen(SOMAXCONN))
         return (handleError("Failed to listen on socket"));
     
@@ -54,7 +54,7 @@ void    Server::acceptNewClient()
     if (newClient < 0)
         return ;
 
-    ClientSocket    client(clientFd);
+    ClientSocket    client(newClient);
     if (client.isValid())
     {
         client.invalidate();
@@ -65,9 +65,9 @@ void    Server::acceptNewClient()
     clientPoll.fd = client.getPollFd();
     clientPoll.events = POLLIN;
     clientPoll.revents = 0;
-    fds.push_back(clientPoll);
+    _pollFds.push_back(clientPoll);
     
-    std::cout << "New client connected: fd" << clientFd << std::endl;
+    std::cout << "New client connected: fd" << newClient << std::endl;
 }
 
 void    Server::handleClientData(size_t index)
