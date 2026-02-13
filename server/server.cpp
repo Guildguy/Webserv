@@ -1,19 +1,25 @@
 #include "includes/server.hpp"
 
-Server::Server() {}
+Server::Server() : _isValid(false) {}
 
-Server::~Server() {}
-
-bool  Server::initialize(int Port, const std::string &IpAddr)
+Server::Server(int Port, const std::string& IpAddr)
+: _serverSocket(Port, IpAddr), _isValid(false)
 {
-    _serverSocket = ServerSocket(Port, IpAddr);
-    
     if (!_serverSocket.isValid())
-        return (handleError("Failed to initialize socket"));
+    {
+        handleError("Failed to initialize socket");
+        return ;
+    }
     if (!_serverSocket.setBind())
-        return (handleError("Failed to bind socket"));
+    {
+        handleError("Failed to bind socket");
+        return ;
+    }
     if (!_serverSocket.setListen(SOMAXCONN))
-        return (handleError("Failed to listen on socket"));
+    {
+        handleError("Failed to listen on socket");
+        return ;
+    }
     
     pollfd  serverPoll;
     serverPoll.fd = _serverSocket.getPollFd();
@@ -21,7 +27,14 @@ bool  Server::initialize(int Port, const std::string &IpAddr)
     serverPoll.revents = 0;
     _pollFds.push_back(serverPoll);
     
-    return (true);
+    _isValid = true;
+}
+
+Server::~Server() {}
+
+bool    Server::isValid() const
+{
+    return (_isValid);
 }
 
 void    Server::run()
@@ -60,7 +73,7 @@ void    Server::acceptNewClient()
     if (client.isValid())
     {
         client.invalidate();
-        return;
+        return ;
     }
     
     pollfd  clientPoll;
@@ -84,7 +97,7 @@ void    Server::handleClientData(size_t index)
         std::cout << "Client disconnected: fd " << clientFd << std::endl;
         client.invalidate();
         _pollFds.erase(_pollFds.begin() + index);
-        return;
+        return ;
     }
 
     std::cout << "Received " << bRead << " bytes: " 
