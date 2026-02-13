@@ -20,7 +20,7 @@ class  Server
         Server();
         ~Server();
 
-        bool	initialize(int Port, const std::string &IP);
+        bool	initialize(int Port, const std::string &IpAddr);
 		void	run();
     
 };
