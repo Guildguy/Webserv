@@ -30,7 +30,14 @@ Server::Server(int Port, const std::string& IpAddr)
     _isValid = true;
 }
 
-Server::~Server() {}
+Server::~Server()
+{
+    for (size_t i = 0; i < _clients.size(); i++)
+    {
+        delete _clients[i];
+    }
+    _clients.clear();
+}
 
 bool    Server::isValid() const
 {
@@ -69,37 +76,39 @@ void    Server::acceptNewClient()
     if (newClient < 0)
         return ;
 
-    ClientSocket    client(newClient);
-    if (client.isValid())
+    ClientSocket* client = new ClientSocket(newClient);
+    if (!client->isValid())
     {
-        client.invalidate();
+        delete client;
+        close(newClient);
         return ;
     }
     
     pollfd  clientPoll;
-    clientPoll.fd = client.getPollFd();
+    clientPoll.fd = client->getPollFd();
     clientPoll.events = POLLIN;
     clientPoll.revents = 0;
     _pollFds.push_back(clientPoll);
+    _clients.push_back(client);
     
-    std::cout << "New client connected: fd" << newClient << std::endl;
+    std::cout << "New client connected: fd " << newClient << std::endl;
 }
 
 void    Server::handleClientData(size_t index)
 {
     char    buffer[1024];
-    int     clientFd = _pollFds[index].fd;
-    ClientSocket    client(clientFd);
+    ClientSocket* client = _clients[index - 1];
 
-    ssize_t  bRead = client.receiveData(buffer, sizeof(buffer));
+    ssize_t  bRead = client->receiveData(buffer, sizeof(buffer));
     if (bRead <= 0)
     {
-        std::cout << "Client disconnected: fd " << clientFd << std::endl;
-        client.invalidate();
+        std::cout << "Client disconnected: fd " << client->getPollFd() << std::endl;
+        delete client;
+        _clients.erase(_clients.begin() + (index - 1));
         _pollFds.erase(_pollFds.begin() + index);
         return ;
     }
 
     std::cout << "Received " << bRead << " bytes: " 
-    << std::string(buffer, bRead) << std::endl;
+    << std::string(buffer, bRead);
 }
