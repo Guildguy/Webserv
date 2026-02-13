@@ -10,6 +10,7 @@ class  Server
     private:
         ServerSocket                    _serverSocket;
         std::vector<pollfd>             _pollFds;
+        std::vector<ClientSocket*>      _clients;
         bool                            _isValid;
         
 		void	acceptNewClient();
