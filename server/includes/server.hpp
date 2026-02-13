@@ -10,6 +10,7 @@ class  Server
     private:
         ServerSocket                    _serverSocket;
         std::vector<pollfd>             _pollFds;
+        bool                            _isValid;
         
 		void	acceptNewClient();
 		void   	handleClientData(size_t index);
@@ -18,9 +19,10 @@ class  Server
 
     public:
         Server();
+        Server(int Port, const std::string &IpAddr);
         ~Server();
 
-        bool	initialize(int Port, const std::string &IpAddr);
+        bool    isValid() const;
 		void	run();
     
 };
