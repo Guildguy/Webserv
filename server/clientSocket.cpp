@@ -8,7 +8,7 @@ ClientSocket::ClientSocket(int fd) : _fd(fd)
         _fd.setNonBlocking();
 }
 
-clientSocket::~ClientSocket()
+ClientSocket::~ClientSocket()
 {
     invalidate();
 }
@@ -25,7 +25,7 @@ bool    ClientSocket::isValid() const
 
 int     ClientSocket::getPollFd() const
 {
-    return (_fd.getPollFd);
+    return (_fd.get());
 }
 
 ssize_t ClientSocket::receiveData(char* buffer, size_t size)
