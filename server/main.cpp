@@ -2,11 +2,11 @@
 
 int main()
 {
-    Server server;
-
     std::cout << "Initializing server on port 8080..." << std::endl;
     
-    if (!server.initialize(8080, "0.0.0.0"))
+    Server server(8080, "0.0.0.0");
+    
+    if (!server.isValid())
     {
         std::cerr << "Failed to initialize server!" << std::endl;
         return 1;
