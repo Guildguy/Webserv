@@ -1,31 +1,32 @@
 #ifndef  SERVER_HPP
 #define  SERVER_HPP
 
+#include "../../domain/includes/port.hpp"
+#include "../../domain/includes/ipAddr.hpp"
 #include "../../infra/includes/fileDescriptor.hpp"
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
+#include "connectionManager.hpp"
+#include "pollManager.hpp"
+#include <iostream>
 
 class  Server
 {
     private:
-        ServerSocket                    _serverSocket;
-        std::vector<pollfd>             _pollFds;
-        std::vector<ClientSocket*>      _clients;
-        bool                            _isValid;
+        ServerSocket			_serverSocket;
+        PollManager				_pollManager;
+        ConnectionManager		_connectionManager;
+        bool					_isValid;
         
-		void	acceptNewClient();
-		void   	handleClientData(size_t index);
-
         bool	handleError(const std::string& msg);
 
     public:
         Server();
-        Server(int Port, const std::string &IpAddr);
+        Server(const Port& port, const IpAddr& ipAddr);
         ~Server();
 
-        bool    isValid() const;
-		void	run();
-    
+        bool	isValid() const;
+        void	run();
 };
 
 #endif
