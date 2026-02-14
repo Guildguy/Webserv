@@ -8,7 +8,7 @@ ServerSocket::ServerSocket()
     _saddr.sin_addr.s_addr = INADDR_ANY;
 }
 
-ServerSocket::ServerSocket(int port, const std::string& ipAddr) 
+ServerSocket::ServerSocket(const Port& port, const IpAddr& ipAddr) 
 : _fd(socket(AF_INET, SOCK_STREAM, 0))
 {
     if (!_fd.isValid())
@@ -32,18 +32,19 @@ ServerSocket::ServerSocket(int port, const std::string& ipAddr)
 
 ServerSocket::~ServerSocket() {}
 
-void    ServerSocket::configAddr(int port, const std::string& ipAddr)
+void    ServerSocket::configAddr(const Port& port, const IpAddr& ipAddr)
 {
     _saddr.sin_family = AF_INET;
-    _saddr.sin_port = htons(port);
+    _saddr.sin_port = htons(port.getValue());
     
-    if (ipAddr == "0.0.0.0" || ipAddr.empty())
+    std::string ipStr = ipAddr.getValue();
+    if (ipStr == "0.0.0.0" || ipStr.empty())
     {
         _saddr.sin_addr.s_addr = INADDR_ANY;
         return;
     }
     
-    in_addr_t addr = inet_addr(ipAddr.c_str());
+    in_addr_t addr = inet_addr(ipStr.c_str());
     if (addr == INADDR_NONE)
     {
         _fd.invalidate();

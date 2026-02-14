@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "fileDescriptor.hpp"
+#include "../../domain/includes/port.hpp"
+#include "../../domain/includes/ipAddr.hpp"
 
 class   ServerSocket
 {
@@ -13,11 +15,11 @@ class   ServerSocket
         FileDescriptor  _fd;
         sockaddr_in     _saddr;
 
-        void    configAddr(int port, const std::string& ipAddr);
+        void    configAddr(const Port& port, const IpAddr& ipAddr);
 
     public:
         ServerSocket();
-        ServerSocket(int port, const std::string& ipAddr);
+        ServerSocket(const Port& port, const IpAddr& ipAddr);
         ~ServerSocket();
         bool    setBind();
         bool    setListen(int backlog);
