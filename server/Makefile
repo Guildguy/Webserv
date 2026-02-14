@@ -3,7 +3,7 @@ NAME = server
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRCS = main.cpp server.cpp serverHandlers.cpp serverSocket.cpp clientSocket.cpp fileDescriptor.cpp
+SRCS = main.cpp infra/server.cpp infra/serverHandlers.cpp infra/serverSocket.cpp infra/clientSocket.cpp infra/fileDescriptor.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)
