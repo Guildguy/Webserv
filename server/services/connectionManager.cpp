@@ -58,5 +58,5 @@ void	ConnectionManager::handleClientData(size_t index)
 
 size_t	ConnectionManager::getClientCount() const
 {
-	return _clients.size();
+	return (_clients.size());
 }

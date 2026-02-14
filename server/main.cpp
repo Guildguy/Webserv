@@ -12,10 +12,10 @@ int main()
         Server server(port, ipAddr);
         
         if (!server.isValid())
-    {
-        std::cerr << "Failed to initialize server!" << std::endl;
-        return 1;
-    }
+        {
+            std::cerr << "Failed to initialize server!" << std::endl;
+            return 1;
+        }
 
         std::cout << "Server started successfully!" << std::endl;
         std::cout << "Listening on 0.0.0.0:8080" << std::endl;
