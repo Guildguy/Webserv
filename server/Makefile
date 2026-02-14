@@ -3,7 +3,17 @@ NAME = server
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRCS = main.cpp services/server.cpp services/serverHandlers.cpp infra/serverSocket.cpp infra/clientSocket.cpp infra/fileDescriptor.cpp
+SRCS = main.cpp \
+       services/server.cpp \
+       services/serverHandlers.cpp \
+       services/pollManager.cpp \
+       services/connectionManager.cpp \
+       infra/serverSocket.cpp \
+       infra/clientSocket.cpp \
+       infra/fileDescriptor.cpp \
+       domain/port.cpp \
+       domain/ipAddr.cpp
+
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)
@@ -11,7 +21,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
-%.o: %.cpp includes/server.hpp
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
