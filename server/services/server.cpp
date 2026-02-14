@@ -1,4 +1,4 @@
-#include "../includes/server.hpp"
+#include "includes/server.hpp"
 
 Server::Server() : _isValid(false) {}
 

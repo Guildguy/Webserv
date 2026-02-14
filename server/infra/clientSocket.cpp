@@ -1,4 +1,4 @@
-#include "../includes/clientSocket.hpp"
+#include "includes/clientSocket.hpp"
 
 ClientSocket::ClientSocket() : _fd(-1) {}
 

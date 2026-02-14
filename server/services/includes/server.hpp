@@ -1,9 +1,9 @@
 #ifndef  SERVER_HPP
 #define  SERVER_HPP
 
-#include "fileDescriptor.hpp"
-#include "serverSocket.hpp"
-#include "clientSocket.hpp"
+#include "../../infra/includes/fileDescriptor.hpp"
+#include "../../infra/includes/serverSocket.hpp"
+#include "../../infra/includes/clientSocket.hpp"
 
 class  Server
 {

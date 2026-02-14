@@ -1,4 +1,4 @@
-#include "../includes/serverSocket.hpp"
+#include "includes/serverSocket.hpp"
 
 ServerSocket::ServerSocket() 
 : _fd(-1)
