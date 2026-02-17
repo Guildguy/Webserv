@@ -7,6 +7,7 @@ SRCS = main.cpp \
        services/server.cpp \
        services/serverHandlers.cpp \
        services/pollManager.cpp \
+       services/epollManager.cpp \
        services/connectionManager.cpp \
        infra/serverSocket.cpp \
        infra/clientSocket.cpp \
