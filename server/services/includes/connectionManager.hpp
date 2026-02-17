@@ -3,8 +3,9 @@
 
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
-#include "pollManager.hpp"
+#include "eventManager.hpp"
 #include <vector>
+#include <poll.h>
 #include <unistd.h>
 #include <iostream>
 
@@ -12,10 +13,10 @@ class	ConnectionManager
 {
 	private:	
 		std::vector<ClientSocket*>	_clients;
-		PollManager&				_pollManager;
+		EventManager&				_eventManager;
 
 	public:
-		explicit ConnectionManager(PollManager& pollManager);
+		explicit ConnectionManager(EventManager& eventManager);
 		~ConnectionManager();
 
 		void	acceptNewClient(ServerSocket& serverSocket);

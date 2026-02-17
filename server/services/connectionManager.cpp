@@ -1,7 +1,7 @@
 #include "includes/connectionManager.hpp"
 
-ConnectionManager::ConnectionManager(PollManager& pollManager)
-: _pollManager(pollManager)
+ConnectionManager::ConnectionManager(EventManager& eventManager)
+: _eventManager(eventManager)
 {}
 
 ConnectionManager::~ConnectionManager()
@@ -28,7 +28,7 @@ void	ConnectionManager::acceptNewClient(ServerSocket& serverSocket)
 		return;
 	}
 	
-	_pollManager.addFd(client->getPollFd(), POLLIN);
+	_eventManager.addFd(client->getPollFd(), POLLIN);
 	_clients.push_back(client);
 	
 	std::cout << "New client connected: fd " << newClient << std::endl;
@@ -48,7 +48,7 @@ void	ConnectionManager::handleClientData(size_t index)
 		std::cout << "Client disconnected: fd " << client->getPollFd() << std::endl;
 		delete client;
 		_clients.erase(_clients.begin() + (index - 1));
-		_pollManager.removeFd(index);
+		_eventManager.removeFd(index);
 		return;
 	}
 
