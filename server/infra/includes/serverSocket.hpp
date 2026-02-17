@@ -1,10 +1,6 @@
 #ifndef SERVERSOCKET_HPP
 #define SERVERSOCKET_HPP
 
-#include <string>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include "fileDescriptor.hpp"
 #include "../../domain/includes/port.hpp"
 #include "../../domain/includes/ipAddr.hpp"
