@@ -6,16 +6,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <iostream>
 #include <signal.h>
-#include <unistd.h>
 #include <poll.h>
 #include <cstdlib>
 #include <cerrno>
-#include <stdio.h>
-#include <fcntl.h>
+#include <string>
 #include <vector>
-#include <arpa/inet.h>
 
 class FileDescriptor
 {
