@@ -1,5 +1,4 @@
 #include "services/includes/server.hpp"
-#include <iostream>
 
 int main()
 {
