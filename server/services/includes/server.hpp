@@ -1,6 +1,10 @@
 #ifndef  SERVER_HPP
 #define  SERVER_HPP
 
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <sys/socket.h>
 #include "../../domain/includes/port.hpp"
 #include "../../domain/includes/ipAddr.hpp"
 #include "../../infra/includes/fileDescriptor.hpp"
@@ -8,13 +12,12 @@
 #include "../../infra/includes/clientSocket.hpp"
 #include "connectionManager.hpp"
 #include "pollManager.hpp"
-#include <iostream>
 
 class  Server
 {
     private:
         ServerSocket			_serverSocket;
-        PollManager				_pollManager;
+        PollManager				_eventManager;
         ConnectionManager		_connectionManager;
         bool					_isValid;
         
