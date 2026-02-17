@@ -64,8 +64,19 @@ std::vector<size_t>	EpollManager::getClientEventIndices() const
 	
 	for (int i = 0; i < _readyEventsCount; i++)
 	{
-		if (_triggeredEvents[i].data.fd != serverFd)
-			indices.push_back(_triggeredEvents[i].data.fd);
+		int eventFd = _triggeredEvents[i].data.fd;
+		if (eventFd == serverFd)
+			continue;
+		
+		// Encontra o índice desse fd no vector _fds
+		for (size_t j = 0; j < _fds.size(); j++)
+		{
+			if (_fds[j] == eventFd)
+			{
+				indices.push_back(j);
+				break;
+			}
+		}
 	}
 	return (indices);
 }
