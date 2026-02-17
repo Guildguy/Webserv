@@ -8,7 +8,7 @@ int main()
         
         Port port(8080);
         IpAddr ipAddr("0.0.0.0");
-        Server server(port, ipAddr);
+        Server server(POLL, port, ipAddr);
         
         if (!server.isValid())
         {
