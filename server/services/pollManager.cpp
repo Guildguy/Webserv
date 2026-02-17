@@ -4,12 +4,13 @@ PollManager::PollManager() {}
 
 PollManager::~PollManager() {}
 
-void	PollManager::addFd(int fd, short events)
+void	PollManager::addFd(int fd, short event)
 {
 	pollfd	pfd;
 	pfd.fd = fd;
-	pfd.events = events;
+	pfd.events = event;
 	pfd.revents = 0;
+	
 	_pollFds.push_back(pfd);
 }
 

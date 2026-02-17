@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <poll.h>
-#include <stdio.h>
+#include <cstddef>
+#include "eventManager.hpp"
 
-class	PollManager
+class	PollManager : public EventManager 
 {
 	private:
 		std::vector<pollfd>	_pollFds;
@@ -14,7 +15,7 @@ class	PollManager
 		PollManager();
 		~PollManager();
 		
-		void	addFd(int fd, short events);
+		void	addFd(int fd, short event);
 		void	removeFd(size_t index);
 		int		waitForEvents();
 		
