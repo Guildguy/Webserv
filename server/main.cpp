@@ -13,7 +13,7 @@ int main()
         if (!server.isValid())
         {
             std::cerr << "Failed to initialize server!" << std::endl;
-            return 1;
+            return (1);
         }
 
         std::cout << "Server started successfully!" << std::endl;
@@ -25,8 +25,8 @@ int main()
     catch (const std::exception& e)
     {
         std::cerr << "Exception: " << e.what() << std::endl;
-        return 1;
+        return (1);
     }
     
-    return 0;
+    return (0);
 }
