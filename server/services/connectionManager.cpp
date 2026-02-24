@@ -1,4 +1,6 @@
 #include "includes/connectionManager.hpp"
+#include "../infra/includes/testHttpResponse.hpp"
+#include <sys/socket.h>
 
 ConnectionManager::ConnectionManager(EventManager& eventManager)
 : _eventManager(eventManager)
@@ -54,6 +56,16 @@ void	ConnectionManager::handleClientData(size_t index)
 
 	std::cout << "Received " << bRead << " bytes: " 
 	<< std::string(buffer, bRead);
+	/** HARDCODADASSO PQP **/
+	sendTestHttpResponse(*client);
+	shutdown(client->getPollFd(), SHUT_WR);
+	
+	std::cout << "Client disconnected: fd " << client->getPollFd() << std::endl;
+	delete client;
+	_clients.erase(_clients.begin() + (index - 1));
+	_eventManager.removeFd(index);
+	return;
+	/** **/
 }
 
 size_t	ConnectionManager::getClientCount() const
