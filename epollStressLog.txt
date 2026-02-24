@@ -1,0 +1,5 @@
+EPOLL - 100 conexões
+Response time: s
+trans. rate: p/s
+elapsed time: s
+/*************************/

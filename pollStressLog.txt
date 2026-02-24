@@ -1,0 +1,40 @@
+POLL - 100 conexões
+Response time: 0.02s
+trans. rate: 5000p/s
+elapsed time: 0.20s
+/*************************/
+
+POLL - 250 conexões
+Response time: 0.04s
+trans. rate: 4460.71p/s
+elapsed time: 0.56s
+/*************************/
+
+POLL - 500 conexões
+Response time: 0.14s
+trans. rate:  3066.87p/s
+elapsed time: 1.63s
+/*************************/
+
+POLL - 1000 conexões
+Response time: 0.23s
+trans. rate:  3461.32p/s
+elapsed time: 2.87s
+/*************************/
+
+POLL - 1020 conexões
+Response time: 0.33 s
+trans. rate:  2394p/s
+elapsed time: 4.26s
+/*************************/
+
+POLL - 1022 conexões
+Response time: 0.35 s
+trans. rate:  2245p/s
+elapsed time: 4.55s
+/*************************/
+
+POLL - 1023 conexões
+Response time: 0.39 s
+trans. rate:  2121p/s
+elapsed time: 4.82s
