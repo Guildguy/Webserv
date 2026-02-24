@@ -12,6 +12,7 @@ SRCS = main.cpp \
        infra/serverSocket.cpp \
        infra/clientSocket.cpp \
        infra/fileDescriptor.cpp \
+       infra/testHttpResponse.cpp \
        domain/port.cpp \
        domain/ipAddr.cpp
 
