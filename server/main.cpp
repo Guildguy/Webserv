@@ -17,8 +17,8 @@ int main()
         }
 
         std::cout << "Server started successfully!" << std::endl;
-        std::cout << "Listening on 0.0.0.0:8080" << std::endl;
-        std::cout << "Test with: telnet localhost 8080" << std::endl;
+        std::cout << "Listening on: " << ipAddr.getValue() << ":" << port.getValue() << std::endl;
+        std::cout << "Test with: telnet localhost " << port.getValue() << std::endl;
         
         server.run();
     }
