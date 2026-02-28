@@ -7,13 +7,14 @@
 
 #include <vector>
 #include <poll.h>
+#include <map>
 #include <unistd.h>
 #include <iostream>
 
 class	ConnectionManager
 {
 	private:	
-		std::vector<ClientSocket*>	_clients;
+		std::map<int, ClientSocket*>	_clients;
 		EpollManager&				_epollManager;
 
 	public:
@@ -21,7 +22,7 @@ class	ConnectionManager
 		~ConnectionManager();
 
 		void	acceptNewClient(ServerSocket& serverSocket);
-		void	handleClientData(size_t index);
+		void	handleClientData(int fd);
 		
 		size_t	getClientCount() const;
 };

@@ -28,32 +28,34 @@ void	ConnectionManager::acceptNewClient(ServerSocket& serverSocket)
 		return;
 	}
 	
-	_epollManager.addFd(client->getPollFd(), POLLIN);
-	_clients.push_back(client);
+	_epollManager.addFd(newClient, POLLIN);
+	_clients[newClient] = client;
 	
 	std::cout << "New client connected: fd " << newClient << std::endl;
 }
 
-void	ConnectionManager::handleClientData(size_t index)
+void	ConnectionManager::handleClientData(int fd)
 {
-	if (index == 0 || index > _clients.size())
+	std::map<int, ClientSocket*>::iterator it = _clients.find(fd);
+
+	if (it == _clients.end())
 		return;
 	
+	ClientSocket* client = it->second;
 	char	buffer[1024];
-	ClientSocket* client = _clients[index - 1];
-
+	
 	ssize_t	bRead = client->receiveData(buffer, sizeof(buffer));
 	if (bRead <= 0)
 	{
-		std::cout << "Client disconnected: fd " << client->getPollFd() << std::endl;
+		std::cout << "Client disconnected: fd " << fd << std::endl;
+		_epollManager.removeFd(fd);
 		delete client;
-		_clients.erase(_clients.begin() + (index - 1));
-		_epollManager.removeFd(index);
+		_clients.erase(it);
 		return;
 	}
 
 	std::cout << "Received " << bRead << " bytes: " 
-	<< std::string(buffer, bRead);
+	<< fd << std::endl;
 }
 
 size_t	ConnectionManager::getClientCount() const
