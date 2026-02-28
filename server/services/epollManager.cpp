@@ -11,6 +11,7 @@ EpollManager::~EpollManager()
 void	EpollManager::addFd(int fd, short event)
 {
 	struct epoll_event create;
+	memset(&create, 0, sizeof(create));
 	create.events = 0;
 	
 	if (event & EPOLLIN)
