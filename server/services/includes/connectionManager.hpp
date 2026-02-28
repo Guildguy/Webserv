@@ -14,14 +14,17 @@
 class	ConnectionManager
 {
 	private:	
-		std::map<int, ClientSocket*>	_clients;
 		EpollManager&				_epollManager;
+		std::vector<ClientSocket*>	_clients;
+
 
 	public:
 		explicit ConnectionManager(EpollManager& epollManager);
 		~ConnectionManager();
 
 		void	acceptNewClient(ServerSocket& serverSocket);
+		ClientSocket* getClientByFd(int fd);
+		void 	removeClient(int fd);
 		void	handleClientData(int fd);
 		
 		size_t	getClientCount() const;

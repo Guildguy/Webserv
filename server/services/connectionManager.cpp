@@ -1,7 +1,8 @@
 #include "includes/connectionManager.hpp"
 
-ConnectionManager::ConnectionManager(EpollManager& epollManager)
-: _epollManager(epollManager)
+ConnectionManager::ConnectionManager(EpollManager& epollManager) :
+_epollManager(epollManager),
+_clients(1024, (ClientSocket*)NULL)
 {}
 
 ConnectionManager::~ConnectionManager()
@@ -29,34 +30,50 @@ void	ConnectionManager::acceptNewClient(ServerSocket& serverSocket)
 	}
 	
 	_epollManager.addFd(newClient, POLLIN);
-	_clients[newClient] = client;
+	if (static_cast<size_t>(newClient) >= _clients.size())
+        _clients.resize(newClient + 128, (ClientSocket*)NULL);
+
+    _clients[newClient] = client;
 	
 	std::cout << "New client connected: fd " << newClient << std::endl;
 }
 
-void	ConnectionManager::handleClientData(int fd)
+void ConnectionManager::handleClientData(int fd)
 {
-	std::map<int, ClientSocket*>::iterator it = _clients.find(fd);
+    ClientSocket* client = getClientByFd(fd);
+    
+    if (client == NULL)
+        return;
 
-	if (it == _clients.end())
-		return;
-	
-	ClientSocket* client = it->second;
-	char	buffer[1024];
-	
-	ssize_t	bRead = client->receiveData(buffer, sizeof(buffer));
-	if (bRead <= 0)
-	{
-		std::cout << "Client disconnected: fd " << fd << std::endl;
-		_epollManager.removeFd(fd);
-		delete client;
-		_clients.erase(it);
-		return;
-	}
-
-	std::cout << "Received " << bRead << " bytes: " 
-	<< fd << std::endl;
+    char buffer[4096];
+    memset(buffer, 0, sizeof(buffer));
+    ssize_t bytesRead = client->receiveData(buffer, sizeof(buffer) - 1);
+    
+    if (bytesRead <= 0)
+    {
+        removeClient(fd);
+        return;
+    }
+    std::cout << "Data from fd " << fd << ": " << buffer << std::endl;
 }
+
+ClientSocket* ConnectionManager::getClientByFd(int fd)
+{
+    if (fd < 0)
+        return (NULL);
+    if (static_cast<size_t>(fd) >= _clients.size())
+        return (NULL);
+    return (_clients[fd]);
+}
+
+void ConnectionManager::removeClient(int fd)
+{
+    std::cout << "Closing connection on fd: " << fd << std::endl;
+    _epollManager.removeFd(fd);
+    delete _clients[fd];
+    _clients[fd] = NULL;
+}
+
 
 size_t	ConnectionManager::getClientCount() const
 {
