@@ -64,12 +64,17 @@ void	Server::run()
             handleError("event manager failed");
             break;
         }
-        
+
+        // Itera sobre todos os eventos prontos
+        std::vector<size_t> clientIndices = _epollManager->getClientEventIndices();
+        std::vector<int>& fds = _epollManager->getEpollFds();
         if (_epollManager->hasServerEvent())
             _connectionManager->acceptNewClient(_serverSocket);
-        
-        std::vector<size_t> clientIndices = _epollManager->getClientEventIndices();
-        for (size_t i = 0; i < clientIndices.size(); i++)
-            _connectionManager->handleClientData(clientIndices[i]);
+        for (size_t i = 0; i < clientIndices.size(); i++) {
+            size_t idx = clientIndices[i];
+            if (idx < fds.size()) {
+                _connectionManager->handleClientData(fds[idx]);
+            }
+        }
     }
 }
