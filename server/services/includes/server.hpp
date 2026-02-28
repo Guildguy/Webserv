@@ -21,7 +21,10 @@ class  Server
         EpollManager*			_epollManager;
         ConnectionManager*		_connectionManager;
         bool					_isValid;
-        
+        void    processEvents(int count);
+        void    handleEventByIndex(int index);
+        bool    isServerSocket(int fd) const;
+
         bool	handleError(const std::string& msg);
 
     public:

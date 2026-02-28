@@ -53,28 +53,38 @@ bool	Server::isValid() const
     return _isValid;
 }
 
-void	Server::run()
+void Server::run()
 {
     while (true)
     {
-        int ret = _epollManager->waitForEvents();
-
-        if (ret < 0)
-        {
-            handleError("event manager failed");
+        int count = _epollManager->waitForEvents();
+        
+        if (count < 0)
             break;
-        }
-
-        // Itera sobre todos os eventos prontos
-        std::vector<size_t> clientIndices = _epollManager->getClientEventIndices();
-        std::vector<int>& fds = _epollManager->getEpollFds();
-        if (_epollManager->hasServerEvent())
-            _connectionManager->acceptNewClient(_serverSocket);
-        for (size_t i = 0; i < clientIndices.size(); i++) {
-            size_t idx = clientIndices[i];
-            if (idx < fds.size()) {
-                _connectionManager->handleClientData(fds[idx]);
-            }
-        }
+        processEvents(count);
     }
+}
+
+void Server::processEvents(int count)
+{
+    for (int i = 0; i < count; i++)
+        handleEventByIndex(i);
+}
+
+void Server::handleEventByIndex(int index)
+{
+    int fd = _epollManager->getEventFd(index);
+    
+    if (isServerSocket(fd))
+    {
+        _connectionManager->acceptNewClient(_serverSocket);
+        return;
+    }
+    
+    _connectionManager->handleClientData(fd);
+}
+
+bool Server::isServerSocket(int fd) const
+{
+    return (fd == _serverSocket.getPollFd());
 }
