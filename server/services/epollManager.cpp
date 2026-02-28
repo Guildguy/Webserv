@@ -12,25 +12,16 @@ void	EpollManager::addFd(int fd, short event)
 {
 	struct epoll_event create;
 	memset(&create, 0, sizeof(create));
-	create.events = 0;
 	
-	if (event & EPOLLIN)
-		create.events |= EPOLLIN;
-	if (event & EPOLLOUT)
-		create.events |= EPOLLOUT;
-	
+	create.events = event;
 	create.data.fd = fd;
 
 	epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &create);
-	_fds.push_back(fd);
 }
 
-void	EpollManager::removeFd(size_t readyFd)
+void	EpollManager::removeFd(int fd)
 {
-	if (readyFd >= _fds.size())
-		return;
-	epoll_ctl(_epollFd, EPOLL_CTL_DEL, _fds[readyFd], NULL);
-	_fds.erase(_fds.begin() + readyFd);
+	epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, NULL);
 }
 
 int	EpollManager::waitForEvents()
@@ -69,7 +60,6 @@ std::vector<size_t>	EpollManager::getClientEventIndices() const
 		if (eventFd == serverFd)
 			continue;
 		
-		// Encontra o índice desse fd no vector _fds
 		for (size_t j = 0; j < _fds.size(); j++)
 		{
 			if (_fds[j] == eventFd)
@@ -80,6 +70,11 @@ std::vector<size_t>	EpollManager::getClientEventIndices() const
 		}
 	}
 	return (indices);
+}
+
+int EpollManager::getEventFd(int index) const
+{
+    return (_triggeredEvents[index].data.fd);
 }
 
 std::vector<int>&	EpollManager::getEpollFds()

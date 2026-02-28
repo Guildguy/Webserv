@@ -19,12 +19,12 @@ class	EpollManager
 		~EpollManager();
 		
 		void	addFd(int fd, short event);
-		void	removeFd(size_t readyFd);
+		void	removeFd(int fd);
 		int		waitForEvents();
 		
 		bool	hasServerEvent() const;
 		std::vector<size_t>	getClientEventIndices() const;
-		
+		int getEventFd(int index) const;
 		std::vector<int>&	getEpollFds();
 		size_t	size() const;
 };
