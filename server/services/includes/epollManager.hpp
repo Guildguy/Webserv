@@ -4,10 +4,8 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <vector>
-#include <poll.h>
-#include "eventManager.hpp"
 
-class	EpollManager : public EventManager 
+class	EpollManager
 {
 	private:
 		int					_epollFd;

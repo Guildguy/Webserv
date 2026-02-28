@@ -12,20 +12,13 @@
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
 #include "connectionManager.hpp"
-#include "pollManager.hpp"
 #include "epollManager.hpp"
-
-enum EventType
-{
-	POLL,
-	EPOLL
-};
 
 class  Server
 {
     private:
         ServerSocket			_serverSocket;
-        EventManager*			_eventManager;
+        EpollManager*			_epollManager;
         ConnectionManager*		_connectionManager;
         bool					_isValid;
         
@@ -33,7 +26,7 @@ class  Server
 
     public:
         Server();
-        Server(EventType type, const Port& port, const IpAddr& ipAddr);
+        Server(const Port& port, const IpAddr& ipAddr);
         ~Server();
 
         bool	isValid() const;

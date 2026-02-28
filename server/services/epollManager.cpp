@@ -13,9 +13,9 @@ void	EpollManager::addFd(int fd, short event)
 	struct epoll_event create;
 	create.events = 0;
 	
-	if (event & POLLIN)
+	if (event & EPOLLIN)
 		create.events |= EPOLLIN;
-	if (event & POLLOUT)
+	if (event & EPOLLOUT)
 		create.events |= EPOLLOUT;
 	
 	create.data.fd = fd;
