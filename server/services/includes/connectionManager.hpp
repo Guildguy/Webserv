@@ -10,6 +10,7 @@
 #include <map>
 #include <unistd.h>
 #include <iostream>
+#include "../../infra/includes/testHttpResponse.hpp"
 
 class	ConnectionManager
 {

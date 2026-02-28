@@ -40,7 +40,7 @@ void	ConnectionManager::acceptNewClient(ServerSocket& serverSocket)
 
 void ConnectionManager::handleClientData(int fd)
 {
-    ClientSocket* client = getClientByFd(fd);
+    ClientSocket* client = _clients[fd];
     
     if (client == NULL)
         return;
@@ -51,10 +51,23 @@ void ConnectionManager::handleClientData(int fd)
     
     if (bytesRead <= 0)
     {
-        removeClient(fd);
+        _epollManager.removeFd(fd);
+        delete client;
+        _clients[fd] = NULL;
         return;
     }
+
     std::cout << "Data from fd " << fd << ": " << buffer << std::endl;
+    
+    // Teste de resposta
+    sendTestHttpResponse(*client);
+    shutdown(fd, SHUT_WR);
+    
+    std::cout << "Client disconnected: fd " << fd << std::endl;
+    
+    _epollManager.removeFd(fd);
+    delete client;
+    _clients[fd] = NULL;
 }
 
 ClientSocket* ConnectionManager::getClientByFd(int fd)
