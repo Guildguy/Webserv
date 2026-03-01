@@ -1,13 +1,16 @@
 #include "includes/server.hpp"
 
-Server::Server() 
-: _epollManager(NULL), _connectionManager(NULL), _isValid(false) 
+Server::Server()
+: _epollManager(NULL), 
+_connectionManager(NULL), 
+_isValid(false) 
 {}
 
 Server::Server(const Port& port, const IpAddr& ipAddr)
 : _serverSocket(port, ipAddr), _epollManager(NULL), _connectionManager(NULL), _isValid(false)
 {
-    _epollManager = new EpollManager();
+    MaxEvents maxEvents(1024);
+    _epollManager = new EpollManager(maxEvents);
     
     if (!_epollManager)
     {
@@ -15,7 +18,7 @@ Server::Server(const Port& port, const IpAddr& ipAddr)
         return;
     }
     
-    _connectionManager = new ConnectionManager(*_epollManager);
+    _connectionManager = new ConnectionManager(*_epollManager, maxEvents);
     if (!_connectionManager)
     {
         handleError("Failed to create connection manager");
