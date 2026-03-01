@@ -16,7 +16,8 @@ SRCS = main.cpp \
        infra/fileDescriptor.cpp \
        infra/testHttpResponse.cpp \
        domain/port.cpp \
-       domain/ipAddr.cpp
+       domain/ipAddr.cpp \
+       domain/epollEvents.cpp
 
 # Mapeia os fontes para a pasta de objetos, preservando a estrutura de subpastas
 OBJS = $(addprefix $(OBJECT_DIRECTORY)/, $(SRCS:.cpp=.o))
