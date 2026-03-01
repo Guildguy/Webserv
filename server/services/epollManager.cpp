@@ -1,8 +1,14 @@
 #include "includes/epollManager.hpp"
 
-EpollManager::EpollManager() : 
-_epollFd(epoll_create1(0)), 
-_readyEventsCount(0) {}
+EpollManager::EpollManager(const MaxEvents& maxEvents)
+: _epollFd(epoll_create1(0)),
+_maxEvents(maxEvents),
+_triggeredEvents(maxEvents.getAmount()),
+_readyEventsCount(0)
+{
+	if (_epollFd < 0)
+		throw std::runtime_error("Failed to create epoll instance");
+}
 
 EpollManager::~EpollManager() 
 {
@@ -18,7 +24,8 @@ void	EpollManager::addFd(int fd, short event)
 	create.events = event;
 	create.data.fd = fd;
 
-	epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &create);
+	if (epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &create) < 0)
+		throw std::runtime_error("Failed to add fd to epoll");
 }
 
 void	EpollManager::removeFd(int fd)
@@ -28,11 +35,16 @@ void	EpollManager::removeFd(int fd)
 
 int	EpollManager::waitForEvents()
 {
-	_readyEventsCount = epoll_wait(_epollFd, _triggeredEvents, 1024, -1);
+	_readyEventsCount = epoll_wait(
+		_epollFd,
+		_triggeredEvents.data(),
+		_maxEvents.getAmount(),
+		-1
+	);
 	return (_readyEventsCount);
 }
 
 int EpollManager::getEventFd(int index) const
 {
-    return (_triggeredEvents[index].data.fd);
+	return (_triggeredEvents[index].data.fd);
 }
