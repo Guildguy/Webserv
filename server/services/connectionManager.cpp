@@ -1,8 +1,8 @@
 #include "includes/connectionManager.hpp"
 
-ConnectionManager::ConnectionManager(EpollManager& epollManager) :
-_epollManager(epollManager),
-_clients(1024, (ClientSocket*)NULL)
+ConnectionManager::ConnectionManager(EpollManager& epollManager, const MaxEvents& maxEvents)
+: _epollManager(epollManager),
+_clients(maxEvents.getAmount(), (ClientSocket*)NULL)
 {}
 
 ConnectionManager::~ConnectionManager()
@@ -38,6 +38,13 @@ void	ConnectionManager::acceptNewClient(ServerSocket& serverSocket)
 	std::cout << "New client connected: fd " << newClient << std::endl;
 }
 
+void	ConnectionManager::disconnectClient(int fd)
+{
+	_epollManager.removeFd(fd);
+	delete _clients[fd];
+	_clients[fd] = NULL;
+}
+
 void ConnectionManager::handleClientData(int fd)
 {
     ClientSocket* client = _clients[fd];
@@ -51,44 +58,16 @@ void ConnectionManager::handleClientData(int fd)
     
     if (bytesRead <= 0)
     {
-        _epollManager.removeFd(fd);
-        delete client;
-        _clients[fd] = NULL;
+        disconnectClient(fd);
         return;
     }
 
     std::cout << "Data from fd " << fd << ": " << buffer << std::endl;
     
-    // Teste de resposta
     sendTestHttpResponse(*client);
     shutdown(fd, SHUT_WR);
     
     std::cout << "Client disconnected: fd " << fd << std::endl;
     
-    _epollManager.removeFd(fd);
-    delete client;
-    _clients[fd] = NULL;
-}
-
-ClientSocket* ConnectionManager::getClientByFd(int fd)
-{
-    if (fd < 0)
-        return (NULL);
-    if (static_cast<size_t>(fd) >= _clients.size())
-        return (NULL);
-    return (_clients[fd]);
-}
-
-void ConnectionManager::removeClient(int fd)
-{
-    std::cout << "Closing connection on fd: " << fd << std::endl;
-    _epollManager.removeFd(fd);
-    delete _clients[fd];
-    _clients[fd] = NULL;
-}
-
-
-size_t	ConnectionManager::getClientCount() const
-{
-	return (_clients.size());
+    disconnectClient(fd);
 }
