@@ -1,7 +1,8 @@
 #include "includes/connectionManager.hpp"
 
-ConnectionManager::ConnectionManager(EventManager& eventManager)
-: _eventManager(eventManager)
+ConnectionManager::ConnectionManager(EpollManager& epollManager, const MaxEvents& maxEvents)
+: _epollManager(epollManager),
+_clients(maxEvents.getAmount(), (ClientSocket*)NULL)
 {}
 
 ConnectionManager::~ConnectionManager()
@@ -28,35 +29,45 @@ void	ConnectionManager::acceptNewClient(ServerSocket& serverSocket)
 		return;
 	}
 	
-	_eventManager.addFd(client->getPollFd(), POLLIN);
-	_clients.push_back(client);
+	_epollManager.addFd(newClient, POLLIN);
+	if (static_cast<size_t>(newClient) >= _clients.size())
+        _clients.resize(newClient + 128, (ClientSocket*)NULL);
+
+    _clients[newClient] = client;
 	
 	std::cout << "New client connected: fd " << newClient << std::endl;
 }
 
-void	ConnectionManager::handleClientData(size_t index)
+void	ConnectionManager::disconnectClient(int fd)
 {
-	if (index == 0 || index > _clients.size())
-		return;
-	
-	char	buffer[1024];
-	ClientSocket* client = _clients[index - 1];
-
-	ssize_t	bRead = client->receiveData(buffer, sizeof(buffer));
-	if (bRead <= 0)
-	{
-		std::cout << "Client disconnected: fd " << client->getPollFd() << std::endl;
-		delete client;
-		_clients.erase(_clients.begin() + (index - 1));
-		_eventManager.removeFd(index);
-		return;
-	}
-
-	std::cout << "Received " << bRead << " bytes: " 
-	<< std::string(buffer, bRead);
+	_epollManager.removeFd(fd);
+	delete _clients[fd];
+	_clients[fd] = NULL;
 }
 
-size_t	ConnectionManager::getClientCount() const
+void ConnectionManager::handleClientData(int fd)
 {
-	return (_clients.size());
+    ClientSocket* client = _clients[fd];
+    
+    if (client == NULL)
+        return;
+
+    char buffer[4096];
+    memset(buffer, 0, sizeof(buffer));
+    ssize_t bytesRead = client->receiveData(buffer, sizeof(buffer) - 1);
+    
+    if (bytesRead <= 0)
+    {
+        disconnectClient(fd);
+        return;
+    }
+
+    std::cout << "Data from fd " << fd << ": " << buffer << std::endl;
+    
+    sendTestHttpResponse(*client);
+    shutdown(fd, SHUT_WR);
+    
+    std::cout << "Client disconnected: fd " << fd << std::endl;
+    
+    disconnectClient(fd);
 }

@@ -1,8 +1,12 @@
 #include "includes/fileDescriptor.hpp"
 
-FileDescriptor::FileDescriptor() : _fd(-1) {}
+FileDescriptor::FileDescriptor() 
+: _fd(-1)
+{}
 
-FileDescriptor::FileDescriptor(int fd) : _fd(fd) {}
+FileDescriptor::FileDescriptor(int fd) 
+: _fd(fd)
+{}
 
 FileDescriptor::~FileDescriptor()
 {

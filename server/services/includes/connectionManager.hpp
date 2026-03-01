@@ -3,26 +3,34 @@
 
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
-#include "eventManager.hpp"
+#include "../../domain/includes/epollEvents.hpp"
+#include "epollManager.hpp"
+
 #include <vector>
 #include <poll.h>
 #include <unistd.h>
 #include <iostream>
+#include "../../infra/includes/testHttpResponse.hpp"
 
 class	ConnectionManager
 {
+	/*enum	connectionState
+	{
+
+	};*/
+
 	private:	
+		EpollManager&				_epollManager;
 		std::vector<ClientSocket*>	_clients;
-		EventManager&				_eventManager;
+
+		void	disconnectClient(int fd);
 
 	public:
-		explicit ConnectionManager(EventManager& eventManager);
+		ConnectionManager(EpollManager& epollManager, const MaxEvents& maxEvents);
 		~ConnectionManager();
 
 		void	acceptNewClient(ServerSocket& serverSocket);
-		void	handleClientData(size_t index);
-		
-		size_t	getClientCount() const;
+		void	handleClientData(int fd);
 };
 
 #endif

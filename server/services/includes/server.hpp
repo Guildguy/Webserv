@@ -8,32 +8,29 @@
 #include <sys/socket.h>
 #include "../../domain/includes/port.hpp"
 #include "../../domain/includes/ipAddr.hpp"
+#include "../../domain/includes/epollEvents.hpp"
 #include "../../infra/includes/fileDescriptor.hpp"
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
 #include "connectionManager.hpp"
-#include "pollManager.hpp"
 #include "epollManager.hpp"
-
-enum EventType
-{
-	POLL,
-	EPOLL
-};
 
 class  Server
 {
     private:
         ServerSocket			_serverSocket;
-        EventManager*			_eventManager;
+        EpollManager*			_epollManager;
         ConnectionManager*		_connectionManager;
         bool					_isValid;
-        
+        void    processEvents(int count);
+        void    handleEventByIndex(int index);
+        bool    isServerSocket(int fd) const;
+
         bool	handleError(const std::string& msg);
 
     public:
         Server();
-        Server(EventType type, const Port& port, const IpAddr& ipAddr);
+        Server(const Port& port, const IpAddr& ipAddr);
         ~Server();
 
         bool	isValid() const;
