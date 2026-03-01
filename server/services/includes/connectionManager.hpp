@@ -3,11 +3,11 @@
 
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
+#include "../../domain/includes/epollEvents.hpp"
 #include "epollManager.hpp"
 
 #include <vector>
 #include <poll.h>
-#include <map>
 #include <unistd.h>
 #include <iostream>
 #include "../../infra/includes/testHttpResponse.hpp"
@@ -23,17 +23,14 @@ class	ConnectionManager
 		EpollManager&				_epollManager;
 		std::vector<ClientSocket*>	_clients;
 
+		void	disconnectClient(int fd);
 
 	public:
-		explicit ConnectionManager(EpollManager& epollManager);
+		ConnectionManager(EpollManager& epollManager, const MaxEvents& maxEvents);
 		~ConnectionManager();
 
 		void	acceptNewClient(ServerSocket& serverSocket);
-		ClientSocket* getClientByFd(int fd);
-		void 	removeClient(int fd);
 		void	handleClientData(int fd);
-		
-		size_t	getClientCount() const;
 };
 
 #endif
