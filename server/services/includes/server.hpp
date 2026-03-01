@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include "../../domain/includes/port.hpp"
 #include "../../domain/includes/ipAddr.hpp"
+#include "../../domain/includes/epollEvents.hpp"
 #include "../../infra/includes/fileDescriptor.hpp"
 #include "../../infra/includes/serverSocket.hpp"
 #include "../../infra/includes/clientSocket.hpp"
