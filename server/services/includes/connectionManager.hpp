@@ -14,6 +14,11 @@
 
 class	ConnectionManager
 {
+	/*enum	connectionState
+	{
+
+	};*/
+
 	private:	
 		EpollManager&				_epollManager;
 		std::vector<ClientSocket*>	_clients;
